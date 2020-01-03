@@ -1,9 +1,8 @@
 import React from 'react';
 import {Provider} from "react-redux";
-import './App.css';
 
-import Board from "../board/Board";
-import {store} from "./AppReducer";
+import Board from "../board/Component";
+import {store} from "./Reducer";
 
 const App: React.FC = () => {
   return (

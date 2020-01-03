@@ -35,11 +35,13 @@ export class ReducerBuilder<State, Actions extends Action<string>> {
       State,
       Record<string, Actions>
     > = this.cases.reduce(
-      (obj, [type, func]) =>
-        (obj[type] = (state: State, action: Actions) => {
+      (obj, [type, func]) => {
+        obj[type] = (state: State, action: Actions) => {
           func(state, action);
           return state;
-        }),
+        };
+        return obj;
+    },
       {} as any
     );
     return createReducer(this.initialState, cases);
