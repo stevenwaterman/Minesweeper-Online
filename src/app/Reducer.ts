@@ -1,11 +1,9 @@
-import { createStore, combineReducers } from "redux";
+import { combineReducers } from "redux";
 
-import {
-  reducer as boardReducer,
-} from "../board/Reducer";
-
+import { reducer as boardReducer } from "../board/Reducer";
+import { reducer as overlayReducer } from "../overlay/Reducer";
 export type RootState = ReturnType<typeof reducer>;
 export const reducer = combineReducers({
-  board: boardReducer
+  board: boardReducer,
+  overlay: overlayReducer
 });
-export const store = createStore(reducer);

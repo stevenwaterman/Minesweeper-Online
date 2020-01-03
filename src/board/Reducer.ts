@@ -1,6 +1,7 @@
 import { ReducerBuilder } from "../utils/Reducer";
 import { RootState } from "../app/Reducer";
 import { Cell, Coordinate, CellState } from "../utils/Cells";
+import { actionCreator } from "../utils/ActionCreator";
 
 interface Matrix<T> extends Array<Array<T>> {}
 
@@ -53,24 +54,22 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .build();
 
 // Actions
-export class ClearCellAction {
-  readonly type = "CLEAR_CELL";
-  readonly coordinate: Coordinate;
-  constructor(coordinate: Coordinate) {
-    this.coordinate = coordinate;
-  }
-}
+export type ClearCellAction = {
+  type: "CLEAR_CELL";
+  coordinate: Coordinate;
+};
+export const createClearCellAction = actionCreator<ClearCellAction>(
+  "CLEAR_CELL"
+);
 
-export class FlagCellAction {
-  readonly type = "FLAG_CELL";
-  readonly coordinate: Coordinate;
-  constructor(coordinate: Coordinate) {
-    this.coordinate = coordinate;
-  }
-}
+export type FlagCellAction = {
+  type: "FLAG_CELL";
+  coordinate: Coordinate;
+};
+export const createFlagCellAction = actionCreator<FlagCellAction>("FLAG_CELL");
 
 // Selectors
-function selectState(state: RootState): State {
+export function selectState(state: RootState): State {
   return state.board;
 }
 export function selectWidth(state: RootState): number {
@@ -82,18 +81,24 @@ export function selectHeight(state: RootState): number {
 export function selectCells(state: RootState): Matrix<Cell> {
   return selectState(state).cells;
 }
-function selectCell(state: RootState, [x, y]: Coordinate): Cell {
-  return selectCells(state)[x][y];
+export function selectCell(state: RootState, [x, y]: Coordinate): Cell | null {
+  const row = selectCells(state)[x];
+  if (row == null) return null;
+  return row[y];
 }
 export function selectCellState(
   state: RootState,
   coordinate: Coordinate
-): CellState {
-  return selectCell(state, coordinate).cellState;
+): CellState | null {
+  const cell = selectCell(state, coordinate);
+  if (cell == null) return null;
+  return cell.cellState;
 }
 export function selectCellStateKnown(
   state: RootState,
   coordinate: Coordinate
-): boolean {
-  return selectCell(state, coordinate).cellStateKnown;
+): boolean | null {
+  const cell = selectCell(state, coordinate);
+  if (cell == null) return null;
+  return cell.cellStateKnown;
 }
