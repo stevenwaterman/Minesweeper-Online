@@ -3,4 +3,8 @@
   grid-gap: 0px;
   position: fixed;
   pointer-events: none;
+
+  .highlighted {
+    background-color: rgba(255, 0, 0, 0.5);
+  }
 }

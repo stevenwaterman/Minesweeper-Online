@@ -1,4 +1,10 @@
 .boardContainer {
   display: grid;
   grid-gap: 0px;
+
+  .cell {
+    border: 1px solid gray;
+    text-align: center;
+    background-color: white;
+  }
 }

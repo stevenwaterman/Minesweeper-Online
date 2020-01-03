@@ -1,7 +1,8 @@
 import { ReducerBuilder } from "../utils/Reducer";
 import { RootState } from "../app/Reducer";
-import { Cell, Coordinate, CellState } from "../utils/Cells";
+import { Cell, Coordinate, CellState, neighbours } from "../utils/Cells";
 import { actionCreator } from "../utils/ActionCreator";
+import { Constraint, UnknownCell } from "../constraints/Reducer";
 
 interface Matrix<T> extends Array<Array<T>> {}
 
@@ -101,4 +102,35 @@ export function selectCellStateKnown(
   const cell = selectCell(state, coordinate);
   if (cell == null) return null;
   return cell.cellStateKnown;
+}
+export function selectNeighbours(
+  state: RootState,
+  coordinate: Coordinate
+): Array<Cell> {
+  return neighbours(coordinate)
+    .map(coord => selectCell(state, coord))
+    .filter(cell => cell != null) as Array<Cell>;
+}
+export function selectConstraint(
+  state: RootState,
+  coordinate: Coordinate
+): Constraint | null {
+  const cell = selectCell(state, coordinate);
+  if (cell == null) return null;
+  if (!cell.cellStateKnown) return null;
+  if (cell.cellState == "X") return null;
+
+  const number = cell.cellState;
+  const cells = selectNeighbours(state, coordinate);
+  const mines =
+    number -
+    cells.filter(cell => cell.cellStateKnown && cell.cellState === "X").length;
+  const unknowns = cells.filter(
+    cell => (cell.cellStateKnown = false)
+  ) as UnknownCell[];
+  return {
+    cells: unknowns,
+    minMines: mines,
+    maxMines: mines
+  };
 }

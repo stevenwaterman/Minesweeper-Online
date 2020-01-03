@@ -1,9 +1,9 @@
 import React from "react";
 import { Provider } from "react-redux";
 
-import Overlay from "../overlay/Component";
-import Board from "../board/Component";
-import ConstraintInfo from "../constraintInfo/Component";
+import Overlay from "../hover/Overlay";
+import Board from "../board/Board";
+import ConstraintPair from "../constraints/ConstraintPair";
 import { store } from "./Store";
 
 const App: React.FC = () => {
@@ -11,7 +11,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <Overlay />
       <Board />
-      <ConstraintInfo />
+      <ConstraintPair />
     </Provider>
   );
 };
