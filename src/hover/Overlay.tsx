@@ -4,19 +4,21 @@ import { selectWidth, selectHeight, selectCells } from "../board/Reducer";
 import { useSelector } from "../utils/Selector";
 import HoverSquare from "./HoverSquare";
 import { RootState } from "../app/Reducer";
-import { Constraint } from "../constraints/Reducer";
 import { Color } from "csstype";
-import { Coordinate } from "../utils/Cells";
+import { Constraint, constraintContains } from "../utils/Constraint";
 
 type Props = {
-  selectConstraintContains: (state: RootState, coordinate: Coordinate) => boolean,
+  selectConstraint: (state: RootState) => Constraint | null,
   color: Color
 }
 
-const Component: React.FC<Props> = ({selectConstraintContains, color}: Props) => {
-  const width = useSelector(selectWidth);
-  const height = useSelector(selectHeight);
+const Component: React.FC<Props> = ({selectConstraint, color}: Props) => {
+  const width = useSelector(selectWidth, [], []);
+  const height = useSelector(selectHeight, [], []);
   const cells = useSelector(selectCells);
+
+  const constraint = useSelector(selectConstraint);
+  if(constraint === null) return null;
 
   return (
     <div
@@ -28,7 +30,7 @@ const Component: React.FC<Props> = ({selectConstraintContains, color}: Props) =>
     >
       {cells.flatMap((row, x) =>
         row.map((_, y) => (
-          <HoverSquare isHighlighted={(state: RootState) => selectConstraintContains(state, [x,y])} color={color}/>
+          <HoverSquare highlighted={constraintContains(constraint, x, y)} color={color}/>
         ))
       )}
     </div>

@@ -2,34 +2,35 @@ import { useSelector } from "../utils/Selector";
 import {
   selectCellState,
   selectCellStateKnown,
-  createClearCellAction,
   selectConstraint
 } from "./Reducer";
-import { Coordinate, CellState } from "../utils/Cells";
+import { Coordinate } from "../utils/Cells";
 import React from "react";
 import "./Styles.scss";
 import { useDispatch } from "react-redux";
-import { createSetHoverConstraintAction, createSelectConstraintAction } from "../constraints/Reducer";
+import { fire } from "../utils/Actions";
+import { SetHoverConstraintAction, SelectConstraintAction } from "../constraints/Reducer";
 
 type Props = {
   coordinate: Coordinate;
 };
 
-const Component: React.FC<Props> = ({ coordinate }) => {
-  const state = useSelector(selectCellState, coordinate) as CellState;
-  const stateKnown = useSelector(selectCellStateKnown, coordinate) as boolean;  
-  const constraint = useSelector(selectConstraint, coordinate)
+const Component: React.FC<Props> = ({ coordinate}) => {
+  const [x,y] = coordinate;
+  const state = useSelector(selectCellState, [x,y], []);
+  const stateKnown = useSelector(selectCellStateKnown, [x,y], []);
+  const constraint = useSelector(selectConstraint, x,y)
   
   const dispatch = useDispatch();
   const setHover = () => {
     if(constraint != null){
-      dispatch(createSetHoverConstraintAction({ constraint }));
+      fire<SetHoverConstraintAction>(dispatch, "SET_HOVER_CONSTRAINT", {constraint})
     }
   }
-  const clearHover = () => dispatch(createSetHoverConstraintAction({ constraint: null }));
+  const clearHover = () => fire<SetHoverConstraintAction>(dispatch, "SET_HOVER_CONSTRAINT", { constraint: null });
   const onClick = () => {
     if(constraint != null){
-      dispatch(createSelectConstraintAction({constraint}));
+      fire<SelectConstraintAction>(dispatch, "SELECT_CONSTRAINT", {constraint});
     }
   }
 

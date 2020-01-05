@@ -1,7 +1,7 @@
 import React from "react";
-import { Constraint } from "./Reducer";
 import { RootState } from "../app/Reducer";
 import { useSelector } from "../utils/Selector";
+import { Constraint } from "../utils/Constraint";
 
 export type Props = {
   selector: (state: RootState) => Constraint | null

@@ -1,8 +1,8 @@
 import { ReducerBuilder } from "../utils/Reducer";
-import { RootState } from "../app/Reducer";
-import { Cell, Coordinate, CellState, neighbours } from "../utils/Cells";
-import { actionCreator } from "../utils/ActionCreator";
-import { Constraint, UnknownCell } from "../constraints/Reducer";
+import { Cell, Coordinate, neighbours } from "../utils/Cells";
+import { Constraint } from "../utils/Constraint";
+import { Action } from "@reduxjs/toolkit";
+import { sliceSelector, selectorCreator, extendSelector } from "../utils/Selector";
 
 interface Matrix<T> extends Array<Array<T>> {}
 
@@ -55,82 +55,62 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .build();
 
 // Actions
-export type ClearCellAction = {
-  type: "CLEAR_CELL";
-  coordinate: Coordinate;
-};
-export const createClearCellAction = actionCreator<ClearCellAction>(
-  "CLEAR_CELL"
-);
-
-export type FlagCellAction = {
-  type: "FLAG_CELL";
-  coordinate: Coordinate;
-};
-export const createFlagCellAction = actionCreator<FlagCellAction>("FLAG_CELL");
+export type ClearCellAction = Action<"CLEAR_CELL"> & { coordinate: Coordinate };
+export type FlagCellAction = Action<"FLAG_CELL"> & { coordinate: Coordinate };
 
 // Selectors
-export function selectState(state: RootState): State {
-  return state.board;
-}
-export function selectWidth(state: RootState): number {
-  return selectCells(state).length;
-}
-export function selectHeight(state: RootState): number {
-  return selectCells(state)[0].length;
-}
-export function selectCells(state: RootState): Matrix<Cell> {
-  return selectState(state).cells;
-}
-export function selectCell(state: RootState, [x, y]: Coordinate): Cell | null {
-  const row = selectCells(state)[x];
+export const selectSlice = sliceSelector("board");
+export const select = selectorCreator(selectSlice);
+
+export const selectCells = select(s => s.cells);
+
+export const selectWidth = extendSelector(selectCells, cells => cells.length);
+export const selectHeight = extendSelector(selectCells, cells => cells[0].length);
+
+function getCell(state: State, ...[x,y] : Coordinate): Cell | null {
+  const row = state.cells[y];
   if (row == null) return null;
-  return row[y];
-}
-export function selectCellState(
-  state: RootState,
-  coordinate: Coordinate
-): CellState | null {
-  const cell = selectCell(state, coordinate);
+  const cell = row[x];
   if (cell == null) return null;
-  return cell.cellState;
+  return cell;
 }
-export function selectCellStateKnown(
-  state: RootState,
-  coordinate: Coordinate
-): boolean | null {
-  const cell = selectCell(state, coordinate);
-  if (cell == null) return null;
-  return cell.cellStateKnown;
+export const selectCell = select(getCell);
+export const selectCellState = extendSelector(selectCell, cell => cell.cellState);
+export const selectCellStateKnown = extendSelector(
+  selectCell,
+  cell => cell.cellStateKnown
+);
+
+function getNeighbours(state: State, ...[x, y]: Coordinate): Array<Cell> {
+  const neighbourCoords = neighbours(x, y);
+  const neighbourCells = neighbourCoords
+    .map(([x, y]) => getCell(state, x, y))
+    .filter(c => c != null);
+  return neighbourCells as Array<Cell>;
 }
-export function selectNeighbours(
-  state: RootState,
-  coordinate: Coordinate
-): Array<Cell> {
-  return neighbours(coordinate)
-    .map(coord => selectCell(state, coord))
-    .filter(cell => cell != null) as Array<Cell>;
-}
-export function selectConstraint(
-  state: RootState,
-  coordinate: Coordinate
-): Constraint | null {
-  const cell = selectCell(state, coordinate);
+export const selectNeighbours = select(getNeighbours);
+export const selectUnknownNeighbours = extendSelector(selectNeighbours, cells =>
+  cells.filter(cell => !cell.cellStateKnown)
+);
+
+function getConstraint(state: State, ...[x, y]: Coordinate): Constraint | null {
+  const cell = getCell(state, x, y);
   if (cell == null) return null;
   if (!cell.cellStateKnown) return null;
-  if (cell.cellState == "X") return null;
+  if (cell.cellState === "X") return null;
+
+  const neighbours = getNeighbours(state, x, y);
+  const unknownNeighbours = neighbours.filter(cell => !cell.cellStateKnown).map(cell => cell.coordinate);
+  const mineNeighbours = neighbours.filter(
+    cell => cell.cellStateKnown && cell.cellState === "X"
+  );
 
   const number = cell.cellState;
-  const cells = selectNeighbours(state, coordinate);
-  const mines =
-    number -
-    cells.filter(cell => cell.cellStateKnown && cell.cellState === "X").length;
-  const unknowns = cells.filter(
-    cell => (cell.cellStateKnown = false)
-  ) as UnknownCell[];
+  const hiddenMines = number - mineNeighbours.length;
   return {
-    cells: unknowns,
-    minMines: mines,
-    maxMines: mines
+    cells: unknownNeighbours,
+    minMines: hiddenMines,
+    maxMines: hiddenMines
   };
 }
+export const selectConstraint = select(getConstraint);
