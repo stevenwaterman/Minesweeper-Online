@@ -13,7 +13,7 @@ import {
 } from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
-import { ClearCellAction, FlagCellAction } from "../board/Reducer";
+import { ClearCellAction, FlagCellAction, RegenerateBoardAction } from "../board/Reducer";
 
 type State = {
   first: Constraint | null;
@@ -112,6 +112,9 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
     if(c2 !== null) state.complexConstraints.push(c2);
     state.first = null;
     state.second = null;
+  })
+  .addCase("REGENERATE_BOARD", (state, _:RegenerateBoardAction) => {
+    Object.assign(state, INITIAL_STATE)
   })
   .build();
 

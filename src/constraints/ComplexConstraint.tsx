@@ -1,8 +1,13 @@
 import React from "react";
-import { Constraint, canClearConstraint, canFlagConstraint } from "../utils/Constraint";
+import {
+  Constraint,
+  canClearConstraint,
+  canFlagConstraint
+} from "../utils/Constraint";
 import { useDispatch } from "../utils/Actions";
 import { SetHoverConstraintAction, SelectConstraintAction } from "./Reducer";
 import { ClearCellAction, FlagCellAction } from "../board/Reducer";
+import "./Styles.scss";
 
 export type Props = {
   constraint: Constraint;
@@ -12,7 +17,10 @@ const Component: React.FC<Props> = ({ constraint }: Props) => {
   const { coords, minMines, maxMines } = constraint;
   const cellCount = coords.length;
   const dispatch = useDispatch<
-    SetHoverConstraintAction | SelectConstraintAction | ClearCellAction | FlagCellAction
+    | SetHoverConstraintAction
+    | SelectConstraintAction
+    | ClearCellAction
+    | FlagCellAction
   >();
 
   const onClick = () => {
@@ -43,6 +51,7 @@ const Component: React.FC<Props> = ({ constraint }: Props) => {
       onMouseLeave={() =>
         dispatch({ type: "SET_HOVER_CONSTRAINT", constraint: null })
       }
+      className="constraint"
     >
       <div>Cells: {cellCount}</div>
       <div>

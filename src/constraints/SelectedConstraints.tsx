@@ -1,5 +1,6 @@
 import { useSelector } from "../utils/Selector";
 import ConstraintInfo from "./ConstraintInfo";
+import "./Styles.scss";
 import {
   selectFirst,
   selectSecond,
@@ -15,80 +16,39 @@ import {
 } from "./Reducer";
 import React from "react";
 import { useDispatch } from "../utils/Actions";
+import ConstraintButton from "../constraints/ConstraintButton";
 
 const Component: React.FC = () => {
-  const anySelected = useSelector(selectAnySelected);
+  const canDeselect = useSelector(selectAnySelected);
   const canSubtract = useSelector(selectCanSubtract);
   const canReduce = useSelector(selectCanReduce);
   const canMerge = useSelector(selectCanMerge);
 
-  const dispatch = useDispatch<ClearSelectedConstraintsAction | SubtractConstraintsAction | ReduceConstraintsAction | MergeConstraintsAction>();
+  const dispatch = useDispatch<
+    | ClearSelectedConstraintsAction
+    | SubtractConstraintsAction
+    | ReduceConstraintsAction
+    | MergeConstraintsAction
+  >();
 
-  return (
-    <div>
-      <div>
-        <b>Hovering</b>
-      </div>
-      <ConstraintInfo constraintSelector={selectHover} />
+  const deselect = () => dispatch({ type: "CLEAR_SELECTED_CONSTRAINTS" });
+  const subtract = () => dispatch({ type: "SUBTRACT_CONSTRAINTS" });
+  const reduce = () => dispatch({ type: "REDUCE_CONSTRAINTS" });
+  const merge = () => dispatch({ type: "MERGE_CONSTRAINTS" });
 
-      <br />
-
-      <div>
-        <b>Orange</b>
-      </div>
-      <ConstraintInfo constraintSelector={selectFirst} />
-
-      <br />
-
-      <div>
-        <b>Blue</b>
-      </div>
-      <ConstraintInfo constraintSelector={selectSecond} />
-
-      <br />
-
-      <button
-        disabled={!anySelected}
-        onClick={() =>
-          dispatch({
-            type: "CLEAR_SELECTED_CONSTRAINTS"
-          })
-        }
-      >
-        Deselect
-      </button>
-      <button
-        disabled={!canSubtract}
-        onClick={() =>
-          dispatch({
-            type: "SUBTRACT_CONSTRAINTS"
-          })
-        }
-      >
-        Subtract
-      </button>
-      <button
-        disabled={!canReduce}
-        onClick={() =>
-          dispatch({
-            type: "REDUCE_CONSTRAINTS"
-          })
-        }
-      >
-        Reduce
-      </button>
-      <button
-        disabled={!canMerge}
-        onClick={() =>
-          dispatch({
-            type: "MERGE_CONSTRAINTS"
-          })
-        }
-      >
-        Merge
-      </button>
+  return <>
+    <div className="selectedConstraints">
+      <ConstraintInfo constraintName="Hovering" constraintSelector={selectHover} />
+      <ConstraintInfo constraintName="Orange" constraintSelector={selectFirst} />
+      <ConstraintInfo constraintName="Blue" constraintSelector={selectSecond} />
     </div>
-  );
+    <div className="constraintActions">
+      <ConstraintButton enabled={canDeselect} action={deselect} text="Deselect"/>
+      <ConstraintButton enabled={canSubtract} action={subtract} text="Subtract"/>
+      <ConstraintButton enabled={canReduce} action={reduce} text="Reduce"/>
+      <ConstraintButton enabled={canMerge} action={merge} text="Merge"/>
+    </div>
+  </>;
 };
 
 export default Component;

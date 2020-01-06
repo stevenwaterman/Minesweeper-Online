@@ -1,0 +1,27 @@
+.columns {
+  display: grid;
+  grid-template-columns: auto 250px;
+  .leftColumn {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+  }
+
+  .rightColumn {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+  }
+}
+
+.board {
+  margin: 0 auto;
+}
+
+.selectedConstraints {
+  margin: 0 auto;
+}
+
+.constraintActions {
+  margin: 0 auto;
+}
