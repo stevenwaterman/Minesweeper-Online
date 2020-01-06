@@ -4,15 +4,25 @@ import {
   selectFirst,
   selectSecond,
   selectAnySelected,
-  selectHover
+  selectHover,
+  ClearSelectedConstraintsAction,
+  selectCanSubtract,
+  selectCanReduce,
+  selectCanMerge,
+  SubtractConstraintsAction,
+  ReduceConstraintsAction,
+  MergeConstraintsAction
 } from "./Reducer";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch } from "../utils/Actions";
 
 const Component: React.FC = () => {
   const anySelected = useSelector(selectAnySelected);
+  const canSubtract = useSelector(selectCanSubtract);
+  const canReduce = useSelector(selectCanReduce);
+  const canMerge = useSelector(selectCanMerge);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ClearSelectedConstraintsAction | SubtractConstraintsAction | ReduceConstraintsAction | MergeConstraintsAction>();
 
   return (
     <div>
@@ -45,7 +55,37 @@ const Component: React.FC = () => {
           })
         }
       >
-        Clear Selection
+        Deselect
+      </button>
+      <button
+        disabled={!canSubtract}
+        onClick={() =>
+          dispatch({
+            type: "SUBTRACT_CONSTRAINTS"
+          })
+        }
+      >
+        Subtract
+      </button>
+      <button
+        disabled={!canReduce}
+        onClick={() =>
+          dispatch({
+            type: "REDUCE_CONSTRAINTS"
+          })
+        }
+      >
+        Reduce
+      </button>
+      <button
+        disabled={!canMerge}
+        onClick={() =>
+          dispatch({
+            type: "MERGE_CONSTRAINTS"
+          })
+        }
+      >
+        Merge
       </button>
     </div>
   );

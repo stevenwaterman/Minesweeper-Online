@@ -5,6 +5,7 @@ import Overlay from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
 import Options from "../options/Options";
 import SelectedConstraints from "../constraints/SelectedConstraints";
+import ConstraintList from "../constraints/ConstraintList";
 import { store } from "./Store";
 import { selectFirst, selectSecond, selectHover } from "../constraints/Reducer";
 import { canClearConstraint, canFlagConstraint } from "../utils/Constraint";
@@ -31,6 +32,7 @@ const App: React.FC = () => {
       <Board />
       <SelectedConstraints />
       <Options />
+      <ConstraintList />
     </Provider>
   );
 };
