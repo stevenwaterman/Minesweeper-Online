@@ -8,10 +8,10 @@ import { Constraint, constraintContains } from "../utils/Constraint";
 
 type Props = {
   selectConstraint: Selector<Constraint | null>;
-  color: Color;
+  colorSelector: (constraint: Constraint) => Color;
 };
 
-const Component: React.FC<Props> = ({ selectConstraint, color }: Props) => {
+const Component: React.FC<Props> = ({ selectConstraint, colorSelector }: Props) => {
   const width = useSelector(selectWidth);
   const height = useSelector(selectHeight);
   const cells = useSelector(selectCells);
@@ -32,7 +32,7 @@ const Component: React.FC<Props> = ({ selectConstraint, color }: Props) => {
           <HoverSquare
             key={`${x},${y}`}
             highlighted={constraintContains(constraint, x, y)}
-            color={color}
+            color={colorSelector(constraint)}
           />
         ))
       )}

@@ -1,7 +1,11 @@
 import { ReducerBuilder } from "../utils/Reducer";
-import { Constraint, constraintEquals } from "../utils/Constraint";
+import {
+  Constraint,
+  constraintEquals,
+} from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
+import { ClearCellAction, FlagCellAction } from "../board/Reducer";
 
 type State = {
   first: Constraint | null;
@@ -24,6 +28,7 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .addCase(
     "SELECT_CONSTRAINT",
     (state, { constraint }: SelectConstraintAction) => {
+      if (constraintEquals(state.first, constraint)) return;
       if (state.first === null) {
         state.first = constraint;
       } else if (state.second === null) {
@@ -38,6 +43,7 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
     "SET_HOVER_CONSTRAINT",
     (state, { constraint }: SetHoverConstraintAction) => {
       if (constraint !== null) {
+        if (constraint.coords.length === 0) return;
         if (constraintEquals(state.first, constraint)) return;
         if (constraintEquals(state.second, constraint)) return;
       }
@@ -51,6 +57,16 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
       state.second = null;
     }
   )
+  .addCase("CLEAR_CELL", (state, { coordinate }: ClearCellAction) => {
+    state.first = null;
+    state.second = null;
+    state.hovering = null;
+  })
+  .addCase("FLAG_CELL", (state, { coordinate }: FlagCellAction) => {
+    state.first = null;
+    state.second = null;
+    state.hovering = null;
+  })
   .build();
 
 // Actions

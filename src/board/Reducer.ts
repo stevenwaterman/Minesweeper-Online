@@ -1,10 +1,5 @@
 import { ReducerBuilder } from "../utils/Reducer";
-import {
-  Cell,
-  Coordinate,
-  neighbours,
-  CellState
-} from "../utils/Cells";
+import { Cell, Coordinate, neighbours, CellState } from "../utils/Cells";
 import { Constraint } from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import {
@@ -36,12 +31,13 @@ function generateCells(
 ): Matrix<InternalCell> {
   const totalSize = width * height;
   const clearCellCount = totalSize - mines;
+  mines = Math.min(totalSize - 1, mines);
 
-  const clearCells: InternalCell[] = Array(clearCellCount - 2).fill({
+  const clearCells: InternalCell[] = Array(clearCellCount - 1).fill({
     stateKnown: false,
     isMine: false
   });
-  const knownCells: InternalCell[] = Array(2).fill({
+  const knownCells: InternalCell[] = Array(1).fill({
     stateKnown: true,
     isMine: false
   });
@@ -51,14 +47,15 @@ function generateCells(
   });
 
   const cells = shuffle([...clearCells, ...knownCells, ...mineCells]);
-  return chunk(cells, width);
+  return chunk(cells, height);
 }
 
 // Reducer
 export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .addCase("CLEAR_CELL", (state, action: ClearCellAction) => {
-    const [x, y] = action.coordinate;
-    const cell = state.cells[x][y];
+    const cell = getInternalCell(state, action);
+    if (cell === null) return state;
+
     if (cell.isMine) {
       state.lost = true;
     } else {
@@ -66,19 +63,31 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
     }
   })
   .addCase("FLAG_CELL", (state, action: FlagCellAction) => {
-    const [x, y] = action.coordinate;
-    const cell = state.cells[x][y];
+    const cell = getInternalCell(state, action);
+    if (cell === null) return state;
+
     if (cell.isMine) {
       cell.stateKnown = true;
     } else {
       state.lost = true;
     }
   })
+  .addCase(
+    "REGENERATE_BOARD",
+    (state, { width, height, mines }: RegenerateBoardAction) => {
+      state.cells = generateCells(width, height, mines);
+    }
+  )
   .build();
 
 // Actions
 export type ClearCellAction = Action<"CLEAR_CELL"> & { coordinate: Coordinate };
 export type FlagCellAction = Action<"FLAG_CELL"> & { coordinate: Coordinate };
+export type RegenerateBoardAction = Action<"REGENERATE_BOARD"> & {
+  width: number;
+  height: number;
+  mines: number;
+};
 
 // Selectors
 export const selectSlice = sliceSelector("board");
@@ -90,14 +99,18 @@ export const selectHeight = extendSelector(
   selectCells,
   cells => cells[0].length
 );
+export const selectMines = extendSelector(
+  selectCells,
+  cells => cells.flatMap(row => row).filter(cell => cell.isMine).length
+);
 
 function getInternalCell(
   state: State,
   { coordinate: [x, y] }: { coordinate: Coordinate }
 ): InternalCell | null {
-  const row = state.cells[y];
+  const row = state.cells[x];
   if (row == null) return null;
-  const cell = row[x];
+  const cell = row[y];
   if (cell == null) return null;
   return cell;
 }
@@ -154,6 +167,8 @@ function getConstraint(
   const unknownNeighbours = neighbours
     .filter(cell => !cell.cellStateKnown)
     .map(cell => cell.coordinate);
+  if (unknownNeighbours.length === 0) return null;
+
   const mineNeighbours = neighbours.filter(
     cell => cell.cellStateKnown && cell.cellState === "X"
   );

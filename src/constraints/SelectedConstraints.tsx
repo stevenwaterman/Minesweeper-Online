@@ -1,6 +1,11 @@
 import { useSelector } from "../utils/Selector";
 import ConstraintInfo from "./ConstraintInfo";
-import { selectFirst, selectSecond, selectAnySelected } from "./Reducer";
+import {
+  selectFirst,
+  selectSecond,
+  selectAnySelected,
+  selectHover
+} from "./Reducer";
 import React from "react";
 import { useDispatch } from "react-redux";
 
@@ -11,11 +16,26 @@ const Component: React.FC = () => {
 
   return (
     <div>
-      <div>Constraint 1</div>
+      <div>
+        <b>Hovering</b>
+      </div>
+      <ConstraintInfo constraintSelector={selectHover} />
+
+      <br />
+
+      <div>
+        <b>Orange</b>
+      </div>
       <ConstraintInfo constraintSelector={selectFirst} />
 
-      <div>Constraint 2</div>
+      <br />
+
+      <div>
+        <b>Blue</b>
+      </div>
       <ConstraintInfo constraintSelector={selectSecond} />
+
+      <br />
 
       <button
         disabled={!anySelected}
