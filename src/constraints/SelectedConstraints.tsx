@@ -9,10 +9,10 @@ const Component: React.FC = () => {
   return (
     <div>
       <div>Constraint 1</div>
-      <ConstraintInfo selector={state => selectFirst(state)} />
+      <ConstraintInfo constraintSelector={selectFirst} />
 
       <div>Constraint 2</div>
-      <ConstraintInfo selector={state => selectSecond(state)} />
+      <ConstraintInfo constraintSelector={selectSecond} />
 
         {anySelected ? <button>Clear Selection</button> : null}
     </div>

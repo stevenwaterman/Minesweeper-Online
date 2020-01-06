@@ -1,20 +1,20 @@
 import React from "react";
 import "./Styles.scss";
 import { selectWidth, selectHeight, selectCells } from "../board/Reducer";
-import { useSelector } from "../utils/Selector";
+import { useArgSelector, useSelector, Selector } from "../utils/Selector";
 import HoverSquare from "./HoverSquare";
 import { RootState } from "../app/Reducer";
 import { Color } from "csstype";
 import { Constraint, constraintContains } from "../utils/Constraint";
 
 type Props = {
-  selectConstraint: (state: RootState) => Constraint | null,
+  selectConstraint: Selector<Constraint | null>,
   color: Color
 }
 
 const Component: React.FC<Props> = ({selectConstraint, color}: Props) => {
-  const width = useSelector(selectWidth, [], []);
-  const height = useSelector(selectHeight, [], []);
+  const width = useSelector(selectWidth);
+  const height = useSelector(selectHeight);
   const cells = useSelector(selectCells);
 
   const constraint = useSelector(selectConstraint);

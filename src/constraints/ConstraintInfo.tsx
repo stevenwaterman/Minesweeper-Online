@@ -1,15 +1,16 @@
 import React from "react";
-import { RootState } from "../app/Reducer";
-import { useSelector } from "../utils/Selector";
+import { useSelector, Selector } from "../utils/Selector";
 import { Constraint } from "../utils/Constraint";
 
 export type Props = {
-  selector: (state: RootState) => Constraint | null
+  constraintSelector: Selector<Constraint | null>;
 };
 
-const Component: React.FC<Props> = ({ selector }: Props) => {
-  const constraint = useSelector(selector)
-  if (constraint == null) return <div>No constraint selected</div>;
+const Component: React.FC<Props> = ({ constraintSelector }: Props) => {
+  const constraint = useSelector(constraintSelector);
+  if (constraint == null) {
+    return <div>No constraint selected</div>;
+  }
 
   const { cells, minMines, maxMines } = constraint;
   const cellCount = cells.length;

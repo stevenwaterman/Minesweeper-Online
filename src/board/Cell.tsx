@@ -1,4 +1,4 @@
-import { useSelector } from "../utils/Selector";
+import { useArgSelector } from "../utils/Selector";
 import {
   selectCellState,
   selectCellStateKnown,
@@ -15,11 +15,10 @@ type Props = {
   coordinate: Coordinate;
 };
 
-const Component: React.FC<Props> = ({ coordinate}) => {
-  const [x,y] = coordinate;
-  const state = useSelector(selectCellState, [x,y], []);
-  const stateKnown = useSelector(selectCellStateKnown, [x,y], []);
-  const constraint = useSelector(selectConstraint, x,y)
+const Component: React.FC<Props> = props => {
+  const state = useArgSelector(selectCellState, props);
+  const stateKnown = useArgSelector(selectCellStateKnown, props);
+  const constraint = useArgSelector(selectConstraint, props)
   
   const dispatch = useDispatch();
   const setHover = () => {

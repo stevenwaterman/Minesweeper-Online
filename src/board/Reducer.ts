@@ -60,47 +60,54 @@ export type FlagCellAction = Action<"FLAG_CELL"> & { coordinate: Coordinate };
 
 // Selectors
 export const selectSlice = sliceSelector("board");
-export const select = selectorCreator(selectSlice);
+export const selector = selectorCreator(selectSlice);
 
-export const selectCells = select(s => s.cells);
-
+export const selectCells = selector(s => s.cells);
 export const selectWidth = extendSelector(selectCells, cells => cells.length);
 export const selectHeight = extendSelector(selectCells, cells => cells[0].length);
 
-function getCell(state: State, ...[x,y] : Coordinate): Cell | null {
+function getCell(state: State, {coordinate: [x,y]} : {coordinate: Coordinate}): Cell | null {
   const row = state.cells[y];
   if (row == null) return null;
   const cell = row[x];
   if (cell == null) return null;
   return cell;
 }
-export const selectCell = select(getCell);
+export const selectCell = selector(getCell);
 export const selectCellState = extendSelector(selectCell, cell => cell.cellState);
 export const selectCellStateKnown = extendSelector(
   selectCell,
   cell => cell.cellStateKnown
 );
 
-function getNeighbours(state: State, ...[x, y]: Coordinate): Array<Cell> {
+function getNeighbours(
+  state: State,
+  { coordinate: [x, y] }: { coordinate: Coordinate }
+): Array<Cell> {
   const neighbourCoords = neighbours(x, y);
   const neighbourCells = neighbourCoords
-    .map(([x, y]) => getCell(state, x, y))
+    .map(([x, y]) => getCell(state, {coordinate: [x, y]}))
     .filter(c => c != null);
   return neighbourCells as Array<Cell>;
 }
-export const selectNeighbours = select(getNeighbours);
+export const selectNeighbours = selector(getNeighbours);
 export const selectUnknownNeighbours = extendSelector(selectNeighbours, cells =>
   cells.filter(cell => !cell.cellStateKnown)
 );
 
-function getConstraint(state: State, ...[x, y]: Coordinate): Constraint | null {
-  const cell = getCell(state, x, y);
+function getConstraint(
+  state: State,
+  { coordinate: [x, y] }: { coordinate: Coordinate }
+): Constraint | null {
+  const cell = getCell(state, {coordinate: [x, y]});
   if (cell == null) return null;
   if (!cell.cellStateKnown) return null;
   if (cell.cellState === "X") return null;
 
-  const neighbours = getNeighbours(state, x, y);
-  const unknownNeighbours = neighbours.filter(cell => !cell.cellStateKnown).map(cell => cell.coordinate);
+  const neighbours = getNeighbours(state, {coordinate: [x, y]});
+  const unknownNeighbours = neighbours
+    .filter(cell => !cell.cellStateKnown)
+    .map(cell => cell.coordinate);
   const mineNeighbours = neighbours.filter(
     cell => cell.cellStateKnown && cell.cellState === "X"
   );
@@ -113,4 +120,4 @@ function getConstraint(state: State, ...[x, y]: Coordinate): Constraint | null {
     maxMines: hiddenMines
   };
 }
-export const selectConstraint = select(getConstraint);
+export const selectConstraint = selector(getConstraint);

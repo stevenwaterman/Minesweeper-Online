@@ -5,8 +5,8 @@ import { useSelector } from "../utils/Selector";
 import Cell from "./Cell";
 
 const Component: React.FC = () => {
-  const width = useSelector(selectWidth, [], []);
-  const height = useSelector(selectHeight, [], []);
+  const width = useSelector(selectWidth);
+  const height = useSelector(selectHeight);
   const cells = useSelector(selectCells);
 
   return (
