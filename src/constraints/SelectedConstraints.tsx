@@ -1,10 +1,19 @@
 import { useSelector } from "../utils/Selector";
 import ConstraintInfo from "./ConstraintInfo";
-import { selectFirst, selectSecond, selectAnySelected } from "./Reducer";
+import {
+  selectFirst,
+  selectSecond,
+  selectAnySelected,
+  ClearSelectedConstraintsAction
+} from "./Reducer";
 import React from "react";
+import { useDispatch } from "react-redux";
+import { fire } from "../utils/Actions";
 
 const Component: React.FC = () => {
-    const anySelected = useSelector(selectAnySelected);
+  const anySelected = useSelector(selectAnySelected);
+
+  const dispatch = useDispatch();
 
   return (
     <div>
@@ -14,7 +23,16 @@ const Component: React.FC = () => {
       <div>Constraint 2</div>
       <ConstraintInfo constraintSelector={selectSecond} />
 
-        {anySelected ? <button>Clear Selection</button> : null}
+      <button
+        disabled={!anySelected}
+        onClick={fire<ClearSelectedConstraintsAction>(
+          dispatch,
+          "CLEAR_SELECTED_CONSTRAINTS",
+          {}
+        )}
+      >
+        Clear Selection
+      </button>
     </div>
   );
 };

@@ -7,17 +7,17 @@ import { Color } from "csstype";
 import { Constraint, constraintContains } from "../utils/Constraint";
 
 type Props = {
-  selectConstraint: Selector<Constraint | null>,
-  color: Color
-}
+  selectConstraint: Selector<Constraint | null>;
+  color: Color;
+};
 
-const Component: React.FC<Props> = ({selectConstraint, color}: Props) => {
+const Component: React.FC<Props> = ({ selectConstraint, color }: Props) => {
   const width = useSelector(selectWidth);
   const height = useSelector(selectHeight);
   const cells = useSelector(selectCells);
 
   const constraint = useSelector(selectConstraint);
-  if(constraint === null) return null;
+  if (constraint === null) return null;
 
   return (
     <div
@@ -29,7 +29,11 @@ const Component: React.FC<Props> = ({selectConstraint, color}: Props) => {
     >
       {cells.flatMap((row, x) =>
         row.map((_, y) => (
-          <HoverSquare highlighted={constraintContains(constraint, x, y)} color={color}/>
+          <HoverSquare
+            key={`${x},${y}`}
+            highlighted={constraintContains(constraint, x, y)}
+            color={color}
+          />
         ))
       )}
     </div>

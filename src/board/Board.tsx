@@ -17,7 +17,7 @@ const Component: React.FC = () => {
         gridTemplateColumns: `repeat(${width}, 25px)`
       }}
     >
-      {cells.flatMap((row, x) => row.map((_, y) => <Cell coordinate={[x, y]} />))}
+      {cells.flatMap((row, x) => row.map((_, y) => <Cell key={`${x},${y}`} coordinate={[x, y]} />))}
     </div>
   );
 };

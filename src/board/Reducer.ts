@@ -161,7 +161,7 @@ function getConstraint(
   const number = cell.cellState;
   const hiddenMines = number - mineNeighbours.length;
   return {
-    cells: unknownNeighbours,
+    coords: unknownNeighbours,
     minMines: hiddenMines,
     maxMines: hiddenMines
   };

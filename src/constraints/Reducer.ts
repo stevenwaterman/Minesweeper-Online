@@ -1,5 +1,5 @@
 import { ReducerBuilder } from "../utils/Reducer";
-import { Constraint } from "../utils/Constraint";
+import { Constraint, constraintEquals } from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
 
@@ -21,17 +21,27 @@ const INITIAL_STATE: State = {
 
 // Reducer
 export const reducer = ReducerBuilder.create(INITIAL_STATE)
-  .addCase("SELECT_CONSTRAINT", (state, action: SelectConstraintAction) => {
-    if (state.first === null) {
-      state.first = action.constraint;
-    } else if (state.second === null) {
-      state.second = action.constraint;
+  .addCase(
+    "SELECT_CONSTRAINT",
+    (state, { constraint }: SelectConstraintAction) => {
+      if (state.first === null) {
+        state.first = constraint;
+      } else if (state.second === null) {
+        state.second = constraint;
+      }
+      if (constraintEquals(state.hovering, constraint)) {
+        state.hovering = null;
+      }
     }
-  })
+  )
   .addCase(
     "SET_HOVER_CONSTRAINT",
-    (state, action: SetHoverConstraintAction) => {
-      state.hovering = action.constraint;
+    (state, { constraint }: SetHoverConstraintAction) => {
+      if (constraint !== null) {
+        if (constraintEquals(state.first, constraint)) return;
+        if (constraintEquals(state.second, constraint)) return;
+      }
+      state.hovering = constraint;
     }
   )
   .addCase(

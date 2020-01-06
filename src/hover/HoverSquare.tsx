@@ -9,7 +9,7 @@ type Props = {
 
 const Component: React.FC<Props> = ({ highlighted, color }) => {
   if (highlighted) {
-    return <div style={{color}} />;
+    return <div style={{background: color}} />;
   }
   return <div />;
 };
