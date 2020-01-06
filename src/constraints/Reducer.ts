@@ -4,16 +4,20 @@ import {
   constraintEquals,
   canSubtract,
   canMerge,
-  canReduce,
+  canOverlap,
   subtractConstraints,
   cellFlagged,
   cellCleared,
   mergeConstraints,
-  reduceConstraints
+  overlapConstraints
 } from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
-import { ClearCellAction, FlagCellAction, RegenerateBoardAction } from "../board/Reducer";
+import {
+  ClearCellAction,
+  FlagCellAction,
+  RegenerateBoardAction
+} from "../board/Reducer";
 
 type State = {
   first: Constraint | null;
@@ -21,6 +25,7 @@ type State = {
   hovering: Constraint | null;
 
   complexConstraints: Array<Constraint>;
+  hasWholeBoardConstraint: boolean;
 };
 
 const INITIAL_STATE: State = {
@@ -28,7 +33,8 @@ const INITIAL_STATE: State = {
   second: null,
   hovering: null,
 
-  complexConstraints: []
+  complexConstraints: [],
+  hasWholeBoardConstraint: false
 };
 
 // Reducer
@@ -55,7 +61,9 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
         if (constraintEquals(state.first, constraint)) return;
         if (constraintEquals(state.second, constraint)) return;
       }
-      state.hovering = constraint;
+      if (state.second === null) {
+        state.hovering = constraint;
+      }
     }
   )
   .addCase(
@@ -103,19 +111,25 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
     state.first = null;
     state.second = null;
   })
-  .addCase("REDUCE_CONSTRAINTS", (state, _: ReduceConstraintsAction) => {
+  .addCase("OVERLAP_CONSTRAINTS", (state, _: OverlapConstraintsAction) => {
     if (state.first === null || state.second === null) return;
-    if (!canReduce(state.first, state.second)) return;
+    if (!canOverlap(state.first, state.second)) return;
 
-    const [c1, c2] = reduceConstraints(state.first, state.second);
-    if(c1 !== null) state.complexConstraints.push(c1);
-    if(c2 !== null) state.complexConstraints.push(c2);
+    const newConstraint = overlapConstraints(state.first, state.second);
+    state.complexConstraints.push(newConstraint);
     state.first = null;
     state.second = null;
   })
-  .addCase("REGENERATE_BOARD", (state, _:RegenerateBoardAction) => {
-    Object.assign(state, INITIAL_STATE)
+  .addCase("REGENERATE_BOARD", (state, _: RegenerateBoardAction) => {
+    Object.assign(state, INITIAL_STATE);
   })
+  .addCase(
+    "WHOLE_BOARD_CONSTRAINT",
+    (state, { constraint }: WholeBoardConstraint) => {
+      state.complexConstraints.push(constraint);
+      state.hasWholeBoardConstraint = true;
+    }
+  )
   .build();
 
 // Actions
@@ -130,7 +144,10 @@ export type SetHoverConstraintAction = Action<"SET_HOVER_CONSTRAINT"> & {
 };
 export type SubtractConstraintsAction = Action<"SUBTRACT_CONSTRAINTS">;
 export type MergeConstraintsAction = Action<"MERGE_CONSTRAINTS">;
-export type ReduceConstraintsAction = Action<"REDUCE_CONSTRAINTS">;
+export type OverlapConstraintsAction = Action<"OVERLAP_CONSTRAINTS">;
+export type WholeBoardConstraint = Action<"WHOLE_BOARD_CONSTRAINT"> & {
+  constraint: Constraint;
+};
 
 // Selectors
 export const selectSlice = sliceSelector("constraints");
@@ -148,6 +165,9 @@ export const selectCanMerge = selector(
   s => s.first !== null && s.second !== null && canMerge(s.first, s.second)
 );
 export const selectCanReduce = selector(
-  s => s.first !== null && s.second !== null && canReduce(s.first, s.second)
+  s => s.first !== null && s.second !== null && canOverlap(s.first, s.second)
 );
 export const selectComplexConstraints = selector(s => s.complexConstraints);
+export const selectHasWholeBoardConstraint = selector(
+  s => s.hasWholeBoardConstraint
+);

@@ -7,9 +7,11 @@ type State = {
   autoZero: boolean;
   autoClear: boolean;
   autoFlag: boolean;
+  showRemaining: boolean;
 };
 
 const INITIAL_STATE: State = {
+  showRemaining: false,
   cheatMode: false,
   autoZero: false,
   autoClear: false,
@@ -36,3 +38,4 @@ export const selectCheatMode = selector(s => s.cheatMode);
 export const selectAutoZero = selector(s => s.autoZero);
 export const selectAutoClear = selector(s => s.autoClear);
 export const selectAutoFlag = selector(s => s.autoFlag);
+export const selectShowRemaining = selector(s => s.showRemaining);

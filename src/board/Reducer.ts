@@ -99,18 +99,20 @@ export const selectHeight = extendSelector(
   selectCells,
   cells => cells[0].length
 );
-export const selectMines = extendSelector(
+export const selectMineCount = extendSelector(
   selectCells,
-  cells => cells.flatMap(row => row).filter(cell => cell.isMine).length
+  cells =>
+    cells.flatMap(row => row).filter(cell => cell.isMine && !cell.stateKnown)
+      .length
 );
 
 function getInternalCell(
   state: State,
   { coordinate: [x, y] }: { coordinate: Coordinate }
 ): InternalCell | null {
-  const row = state.cells[x];
-  if (row == null) return null;
-  const cell = row[y];
+  const column = state.cells[x];
+  if (column == null) return null;
+  const cell = column[y];
   if (cell == null) return null;
   return cell;
 }
@@ -141,9 +143,9 @@ export const selectCellStateKnown = extendSelector(
 
 function getNeighbours(
   state: State,
-  { coordinate: [x, y] }: { coordinate: Coordinate }
+  { coordinate }: { coordinate: Coordinate }
 ): Array<Cell> {
-  const neighbourCoords = neighbours(x, y);
+  const neighbourCoords = neighbours(...coordinate);
   const neighbourCells = neighbourCoords
     .map(([x, y]) => getCell(state, { coordinate: [x, y] }))
     .filter(c => c != null);
@@ -182,3 +184,24 @@ function getConstraint(
   };
 }
 export const selectConstraint = selector(getConstraint);
+
+export const selectUnknownCells = extendSelector(
+  selectCells,
+  cells =>
+    cells.flatMap((column, x) =>
+      column
+        .map((cell, y) => [x, y, cell.stateKnown])
+        .filter(([_x, _y, known]) => !known)
+        .map(([x, y, _]) => [x, y])
+    ) as Coordinate[]
+);
+
+export const selectCoords = selector(s => {
+  const coords: Coordinate[] = [];
+  for (let y = 0; y < s.cells[0].length; y++) {
+    for (let x = 0; x < s.cells.length; x++) {
+      coords.push([x, y]);
+    }
+  }
+  return coords;
+});

@@ -6,6 +6,7 @@ import Overlay from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
 import Options from "../options/Options";
 import SelectedConstraints from "../constraints/SelectedConstraints";
+import ConstraintActions from "../constraints/ConstraintActions"
 import ConstraintList from "../constraints/ConstraintList";
 import { store } from "./Store";
 import { selectFirst, selectSecond, selectHover } from "../constraints/Reducer";
@@ -36,12 +37,13 @@ const App: React.FC = () => {
             <Board />
           </div>
           <SelectedConstraints />
+          <ConstraintActions />
+          <ConstraintList />
         </div>
         <div className="rightColumns">
           <Options />
         </div>
       </div>
-      <ConstraintList />
     </Provider>
   );
 };

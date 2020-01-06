@@ -23,7 +23,8 @@ import {
   selectCheatMode,
   selectAutoZero,
   selectAutoClear,
-  selectAutoFlag
+  selectAutoFlag,
+  selectShowRemaining
 } from "../options/Reducer";
 
 type Props = {
@@ -89,6 +90,22 @@ const Component: React.FC<Props> = props => {
     if (autoFlag && canFlagConstraint(constraint)) flagConstraint(constraint);
   }
 
+  let text = "";
+  const showRemaining = useSelector(selectShowRemaining);
+  if (stateKnown) {
+    if (state === "X") {
+      text = "X";
+    } else {
+      if (showRemaining) {
+        if (constraint !== null && constraint.maxMines !== 0) {
+          text = "" + constraint.maxMines;
+        }
+      } else if (state !== 0) {
+        text = "" + state;
+      }
+    }
+  }
+
   return (
     <div
       className="cell"
@@ -105,7 +122,7 @@ const Component: React.FC<Props> = props => {
       }
       onClick={onClick}
     >
-      {stateKnown && state !== "X" && state !== 0 ? state : ""}
+      {text}
     </div>
   );
 };

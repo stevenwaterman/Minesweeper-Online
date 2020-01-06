@@ -16,7 +16,7 @@ const Component: React.FC<Props> = ({ enabled, text, action }) => {
     );
   } else {
     return <button className="constraintButton">{text}</button>;
-  } // TODO reduce green when shouldn't be, hover should be disabled when both selected.
+  }
 };
 
 export default Component;

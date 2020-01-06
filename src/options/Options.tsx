@@ -5,29 +5,47 @@ import {
   selectCheatMode,
   selectAutoZero,
   selectAutoClear,
-  selectAutoFlag
+  selectAutoFlag,
+  selectShowRemaining
 } from "./Reducer";
 import { useDispatch } from "../utils/Actions";
 import {
   selectWidth,
   selectHeight,
-  selectMines,
+  selectMineCount,
   RegenerateBoardAction
 } from "../board/Reducer";
 
 const Component: React.FC = () => {
+  const showRemaining = useSelector(selectShowRemaining);
   const cheatMode = useSelector(selectCheatMode);
   const autoZero = useSelector(selectAutoZero);
   const autoClear = useSelector(selectAutoClear);
   const autoFlag = useSelector(selectAutoFlag);
   const width = useSelector(selectWidth);
   const height = useSelector(selectHeight);
-  const mines = useSelector(selectMines);
+  const mines = useSelector(selectMineCount);
   const dispatch = useDispatch<SetOptionAction | RegenerateBoardAction>();
 
   return (
     <div>
       <div>
+        <label>
+          Show Remaining:
+          <input
+            name="showRemaining"
+            type="checkbox"
+            checked={showRemaining}
+            onChange={e =>
+              dispatch({
+                type: "SET_OPTION",
+                option: "showRemaining",
+                value: e.target.checked
+              })
+            }
+          />
+        </label>
+        </div><div>
         <label>
           Cheat Mode:
           <input

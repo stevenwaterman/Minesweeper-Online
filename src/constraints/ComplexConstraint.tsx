@@ -1,4 +1,4 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import {
   Constraint,
   canClearConstraint,
@@ -8,6 +8,8 @@ import { useDispatch } from "../utils/Actions";
 import { SetHoverConstraintAction, SelectConstraintAction } from "./Reducer";
 import { ClearCellAction, FlagCellAction } from "../board/Reducer";
 import "./Styles.scss";
+import { useSelector } from "../utils/Selector";
+import { selectAutoClear, selectAutoFlag, selectCheatMode } from "../options/Reducer";
 
 export type Props = {
   constraint: Constraint;
@@ -23,10 +25,13 @@ const Component: React.FC<Props> = ({ constraint }: Props) => {
     | FlagCellAction
   >();
 
+const canClear = canClearConstraint(constraint);
+const canFlag = canFlagConstraint(constraint);
+
   const onClick = () => {
     if (constraint === null) return;
-    if (canClearConstraint(constraint)) return clearConstraint(constraint);
-    if (canFlagConstraint(constraint)) return flagConstraint(constraint);
+    if (canClear) return clearConstraint(constraint);
+    if (canFlag) return flagConstraint(constraint);
     return dispatch({ type: "SELECT_CONSTRAINT", constraint });
   };
 
@@ -42,6 +47,26 @@ const Component: React.FC<Props> = ({ constraint }: Props) => {
     );
   }
 
+  const autoClear = useSelector(selectAutoClear);
+  if (autoClear && canClear) clearConstraint(constraint);
+
+  const autoFlag = useSelector(selectAutoFlag);
+  if (autoFlag && canFlag) flagConstraint(constraint);
+
+  const style: CSSProperties = {};
+  if (canClearConstraint || canFlagConstraint) {
+    style.cursor = "pointer";
+  }
+
+  const cheatMode = useSelector(selectCheatMode);
+  if (cheatMode) {
+    if (canClear) {
+      style.background = "#00ff0050";
+    } else if (canFlag) {
+      style.background = "#ff000050";
+    }
+  }
+
   return (
     <div
       onClick={onClick}
@@ -52,6 +77,7 @@ const Component: React.FC<Props> = ({ constraint }: Props) => {
         dispatch({ type: "SET_HOVER_CONSTRAINT", constraint: null })
       }
       className="constraint"
+      style={style}
     >
       <div>Cells: {cellCount}</div>
       <div>
