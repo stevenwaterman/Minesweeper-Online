@@ -4,7 +4,9 @@
 
   .cell {
     border: 1px solid gray;
-    text-align: center;
     background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

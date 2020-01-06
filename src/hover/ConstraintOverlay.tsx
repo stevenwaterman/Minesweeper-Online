@@ -1,10 +1,6 @@
 import React from "react";
 import "./Styles.scss";
-import {
-  selectWidth,
-  selectHeight,
-  selectCoords
-} from "../board/Reducer";
+import { selectWidth, selectHeight, selectCoords } from "../board/Reducer";
 import { useSelector, Selector } from "../utils/Selector";
 import HoverSquare from "./HoverSquare";
 import { Color } from "csstype";
@@ -29,8 +25,8 @@ const Component: React.FC<Props> = ({
     <div
       className="overlayContainer"
       style={{
-        gridTemplateColumns: `repeat(${width}, 25px)`,
-        gridTemplateRows: `repeat(${height}, 25px)`
+        gridTemplateColumns: `repeat(${width}, 40px)`,
+        gridTemplateRows: `repeat(${height}, 40px)`
       }}
     >
       {coords.map(([x, y]) => (

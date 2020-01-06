@@ -10,19 +10,21 @@ import {
   OverlapConstraintsAction,
   MergeConstraintsAction,
   WholeBoardConstraint,
-  selectHasWholeBoardConstraint,
+  selectHasWholeBoardConstraint
 } from "./Reducer";
 import React from "react";
 import { useDispatch } from "../utils/Actions";
 import ConstraintButton from "../constraints/ConstraintButton";
-import { selectUnknownCells, selectMineCount } from "../board/Reducer";
+import { selectUnknownCells, selectRemainingMineCount } from "../board/Reducer";
 
 const Component: React.FC = () => {
   const canDeselect = useSelector(selectAnySelected);
   const canSubtract = useSelector(selectCanSubtract);
   const canOverlap = useSelector(selectCanReduce);
   const canMerge = useSelector(selectCanMerge);
-  const canAddWholeBoardConstraint = !useSelector(selectHasWholeBoardConstraint);
+  const canAddWholeBoardConstraint = !useSelector(
+    selectHasWholeBoardConstraint
+  );
 
   const dispatch = useDispatch<
     | ClearSelectedConstraintsAction
@@ -38,7 +40,7 @@ const Component: React.FC = () => {
   const merge = () => dispatch({ type: "MERGE_CONSTRAINTS" });
 
   const unknownCells = useSelector(selectUnknownCells);
-  const mineCount = useSelector(selectMineCount);
+  const mineCount = useSelector(selectRemainingMineCount);
   const addWholeBoardConstraint = () =>
     dispatch({
       type: "WHOLE_BOARD_CONSTRAINT",

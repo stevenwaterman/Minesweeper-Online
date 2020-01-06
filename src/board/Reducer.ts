@@ -99,7 +99,14 @@ export const selectHeight = extendSelector(
   selectCells,
   cells => cells[0].length
 );
+
 export const selectMineCount = extendSelector(
+  selectCells,
+  cells =>
+    cells.flatMap(row => row).filter(cell => cell.isMine)
+      .length
+);
+export const selectRemainingMineCount = extendSelector(
   selectCells,
   cells =>
     cells.flatMap(row => row).filter(cell => cell.isMine && !cell.stateKnown)

@@ -13,8 +13,8 @@ const Component: React.FC = () => {
     <div
       className="boardContainer"
       style={{
-        gridTemplateColumns: `repeat(${width}, 25px)`,
-        gridTemplateRows: `repeat(${height}, 25px)`
+        gridTemplateColumns: `repeat(${width}, 40px)`,
+        gridTemplateRows: `repeat(${height}, 40px)`
       }}
     >
       {coords.map(([x,y]) => <Cell key={`${x},${y}`} coordinate={[x, y]} />)}
