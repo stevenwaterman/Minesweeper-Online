@@ -1,10 +1,10 @@
 import { Dispatch, Action } from "redux";
+import { useDispatch as reduxUseDispatch } from "react-redux";
 
-export type ActionType<A extends Action<string>> = A extends Action<infer TYPE> ? TYPE : never;
+export type ExtractType<A extends Action<string>> = A extends Action<infer TYPE>
+  ? TYPE
+  : never;
 
-export function fire<A extends Action>(dispatch: Dispatch<A>, type: ActionType<A>, payload: Omit<A, "type">): () => void{
-    return () => dispatch({
-        type,
-        ...payload
-    } as A);
+export function useDispatch<Actions extends Action>(): Dispatch<Actions> {
+  return reduxUseDispatch<Dispatch<Actions>>();
 }

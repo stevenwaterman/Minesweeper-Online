@@ -19,8 +19,6 @@ export function constraintEquals(
 ): boolean {
   if (c1 === null && c2 === null) return true;
   if (c1 === null || c2 === null) return false;
-  console.log(JSON.stringify(c1));
-  console.log(JSON.stringify(c2));
 
   const coords1 = c1.coords;
   const coords2 = c2.coords;

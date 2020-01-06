@@ -1,14 +1,8 @@
 import { useSelector } from "../utils/Selector";
 import ConstraintInfo from "./ConstraintInfo";
-import {
-  selectFirst,
-  selectSecond,
-  selectAnySelected,
-  ClearSelectedConstraintsAction
-} from "./Reducer";
+import { selectFirst, selectSecond, selectAnySelected } from "./Reducer";
 import React from "react";
 import { useDispatch } from "react-redux";
-import { fire } from "../utils/Actions";
 
 const Component: React.FC = () => {
   const anySelected = useSelector(selectAnySelected);
@@ -25,11 +19,11 @@ const Component: React.FC = () => {
 
       <button
         disabled={!anySelected}
-        onClick={fire<ClearSelectedConstraintsAction>(
-          dispatch,
-          "CLEAR_SELECTED_CONSTRAINTS",
-          {}
-        )}
+        onClick={() =>
+          dispatch({
+            type: "CLEAR_SELECTED_CONSTRAINTS"
+          })
+        }
       >
         Clear Selection
       </button>

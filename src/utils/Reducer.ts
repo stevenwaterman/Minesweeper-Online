@@ -1,8 +1,8 @@
 import { Action, Reducer, createReducer, CaseReducers } from "@reduxjs/toolkit";
-import { ActionType } from "./Actions";
+import { ExtractType } from "./Actions";
 
 export type ReducerCase<State, A extends Action> = [
-  ActionType<A>,
+  ExtractType<A>,
   (state: State, action: A) => void
 ];
 

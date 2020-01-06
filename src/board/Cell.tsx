@@ -7,12 +7,11 @@ import {
 import { Coordinate } from "../utils/Cells";
 import React from "react";
 import "./Styles.scss";
-import { useDispatch } from "react-redux";
-import { fire } from "../utils/Actions";
 import {
   SetHoverConstraintAction,
-  SelectConstraintAction
+  SelectConstraintAction,
 } from "../constraints/Reducer";
+import { useDispatch } from "../utils/Actions";
 
 type Props = {
   coordinate: Coordinate;
@@ -23,7 +22,7 @@ const Component: React.FC<Props> = props => {
   const stateKnown = useArgSelector(selectCellStateKnown, props);
   const constraint = useArgSelector(selectConstraint, props);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<SetHoverConstraintAction | SelectConstraintAction>();
   
   const style: React.CSSProperties = {};
   if (constraint !== null) style.cursor = "pointer";
@@ -33,9 +32,9 @@ const Component: React.FC<Props> = props => {
     <div
       className="cell"
       style={style}
-      onPointerEnter={constraint === null ? undefined : fire<SetHoverConstraintAction>(dispatch, "SET_HOVER_CONSTRAINT", { constraint })}
-      onPointerLeave={constraint === null ? undefined : fire<SetHoverConstraintAction>(dispatch, "SET_HOVER_CONSTRAINT", { constraint: null })}
-      onClick={constraint === null ? undefined : fire<SelectConstraintAction>(dispatch, "SELECT_CONSTRAINT", { constraint })}
+      onPointerEnter={constraint === null ? undefined : () => dispatch({type: "SET_HOVER_CONSTRAINT", constraint })}
+      onPointerLeave={constraint === null ? undefined : () => dispatch({type: "SET_HOVER_CONSTRAINT", constraint:null})}
+      onClick={constraint === null ? undefined : () => dispatch({type: "SELECT_CONSTRAINT", constraint })}
     >
       {stateKnown ? state : ""}
     </div>
