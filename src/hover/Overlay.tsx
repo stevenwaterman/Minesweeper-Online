@@ -1,9 +1,8 @@
 import React from "react";
 import "./Styles.scss";
 import { selectWidth, selectHeight, selectCells } from "../board/Reducer";
-import { useArgSelector, useSelector, Selector } from "../utils/Selector";
+import { useSelector, Selector } from "../utils/Selector";
 import HoverSquare from "./HoverSquare";
-import { RootState } from "../app/Reducer";
 import { Color } from "csstype";
 import { Constraint, constraintContains } from "../utils/Constraint";
 

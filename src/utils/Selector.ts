@@ -20,11 +20,11 @@ type SelectorCreator<State> = <T, ARG>(
 export function selectorCreator<State>(
   sliceSelector: (state: RootState) => State
 ): SelectorCreator<State> {
-  return function<T, ARGS extends any[]>(
-    selector: (state: State, ...args: ARGS) => T
+  return function<T, ARG>(
+    selector: (state: State, arg: ARG) => T
   ) {
-    return (state: RootState, ...args: ARGS) => {
-      return selector(sliceSelector(state), ...args);
+    return (state: RootState, arg: ARG) => {
+      return selector(sliceSelector(state), arg);
     };
   };
 }

@@ -3,7 +3,6 @@ import { Constraint } from "../utils/Constraint";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
 
-
 type State = {
   first: Constraint | null;
   second: Constraint | null;
@@ -45,13 +44,22 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .build();
 
 // Actions
-export type SelectConstraintAction = Action<"SELECT_CONSTRAINT"> & { constraint: Constraint; };
-export type ClearSelectedConstraintsAction = Action<"CLEAR_SELECTED_CONSTRAINTS">
-export type SetHoverConstraintAction = Action<"SET_HOVER_CONSTRAINT"> & { constraint: Constraint | null; };
+export type SelectConstraintAction = Action<"SELECT_CONSTRAINT"> & {
+  constraint: Constraint;
+};
+export type ClearSelectedConstraintsAction = Action<
+  "CLEAR_SELECTED_CONSTRAINTS"
+>;
+export type SetHoverConstraintAction = Action<"SET_HOVER_CONSTRAINT"> & {
+  constraint: Constraint | null;
+};
 
 // Selectors
 export const selectSlice = sliceSelector("constraints");
-export const select = selectorCreator(selectSlice);
-export const selectFirst = select(s => s.first);
-export const selectSecond = select(s => s.second);
-export const selectAnySelected = select(s => s.first !== null || s.second !== null);
+export const selector = selectorCreator(selectSlice);
+export const selectFirst = selector(s => s.first);
+export const selectSecond = selector(s => s.second);
+export const selectHover = selector(s => s.hovering);
+export const selectAnySelected = selector(
+  s => s.first !== null || s.second !== null
+);
