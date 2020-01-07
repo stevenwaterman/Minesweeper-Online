@@ -51,7 +51,7 @@ function generateCells(
 }
 
 function loadCells(
-  mines: Matrix<boolean>,
+  mines: Matrix<0 | 1>,
   known: Coordinate
 ): Matrix<InternalCell> {
   const height = mines[0].length;
@@ -61,7 +61,7 @@ function loadCells(
     for (let y = 0; y < height; y++) {
       const cell: InternalCell = {
         stateKnown: x === known[0] && y === known[1],
-        isMine: mines[x][y]
+        isMine: mines[x][y] === 1
       };
       cells.push(cell);
     }
@@ -112,7 +112,7 @@ export type RegenerateBoardAction = Action<"REGENERATE_BOARD"> & {
   mines: number;
 };
 export type LoadBoardAction = Action<"LOAD_BOARD"> & {
-  mines: Matrix<boolean>;
+  mines: Matrix<0 | 1>;
   start: Coordinate;
 };
 

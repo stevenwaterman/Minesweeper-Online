@@ -6,6 +6,7 @@ import Overlay from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
 import CoordsOverlay from "../coordsOverlay/CoordsOverlay";
 import AllOptions from "../options/AllOptionsPanel";
+import Title from "./Title";
 import SelectedConstraints, {
   targetColorSelector,
   firstColorSelector,
@@ -25,7 +26,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <div className="columns">
         <div className="leftColumn">
-          <h1>Minesweeper</h1>
+          <Title />
           <div className="board">
             <CoordsOverlay />
             <Overlay
@@ -47,7 +48,7 @@ const App: React.FC = () => {
           <ConstraintList />
         </div>
         <div className="rightColumn">
-          <AllOptions/>
+          <AllOptions />
         </div>
       </div>
     </Provider>

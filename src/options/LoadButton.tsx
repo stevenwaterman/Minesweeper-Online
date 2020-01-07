@@ -8,7 +8,7 @@ import "./Styles.scss";
 type Props = {
   name: string;
   save: {
-    mines: Matrix<boolean>;
+    mines: Matrix<0 | 1>;
     start: Coordinate;
   };
 };
