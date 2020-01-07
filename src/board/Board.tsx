@@ -3,6 +3,7 @@ import "./Styles.scss";
 import { selectWidth, selectHeight, selectCoords } from "./Reducer";
 import { useSelector } from "../utils/Selector";
 import Cell from "./Cell";
+import { gridStyle } from "../utils/Styles";
 
 const Component: React.FC = () => {
   const width = useSelector(selectWidth);
@@ -12,10 +13,7 @@ const Component: React.FC = () => {
   return (
     <div
       className="boardContainer"
-      style={{
-        gridTemplateColumns: `repeat(${width}, 40px)`,
-        gridTemplateRows: `repeat(${height}, 40px)`
-      }}
+      style={gridStyle(width, height)}
     >
       {coords.map(([x,y]) => <Cell key={`${x},${y}`} coordinate={[x, y]} />)}
     </div>

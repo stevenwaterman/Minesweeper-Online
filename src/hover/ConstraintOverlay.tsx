@@ -5,6 +5,7 @@ import { useSelector, Selector } from "../utils/Selector";
 import HoverSquare from "./HoverSquare";
 import { Color } from "csstype";
 import { Constraint, constraintContains } from "../utils/Constraint";
+import { gridStyle } from "../utils/Styles";
 
 type Props = {
   selectConstraint: Selector<Constraint | null>;
@@ -22,13 +23,7 @@ const Component: React.FC<Props> = ({
   if (constraint === null) return null;
 
   return (
-    <div
-      className="overlayContainer"
-      style={{
-        gridTemplateColumns: `repeat(${width}, 40px)`,
-        gridTemplateRows: `repeat(${height}, 40px)`
-      }}
-    >
+    <div className="overlayContainer" style={gridStyle(width, height)}>
       {coords.map(([x, y]) => (
         <HoverSquare
           key={`${x},${y}`}

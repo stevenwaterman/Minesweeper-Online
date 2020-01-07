@@ -20,7 +20,9 @@ const Component: React.FC<Props> = ({ text, constraint }) => {
     | ClearSelectedConstraintsAction
   >();
 
-  const addConstraint = () => {
+  const addConstraint = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (constraint === null) return;
     dispatch({ type: "ADD_CONSTRAINT", constraint });
     dispatch({ type: "CLEAR_SELECTED_CONSTRAINTS" });

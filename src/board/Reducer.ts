@@ -20,7 +20,7 @@ type State = {
 };
 
 const INITIAL_STATE: State = {
-  cells: generateCells(14, 10, 50),
+  cells: generateCells(14, 7, 25),
   lost: false
 };
 
@@ -50,20 +50,23 @@ function generateCells(
   return chunk(cells, height);
 }
 
-function loadCells(mines: Matrix<boolean>, known: Coordinate): Matrix<InternalCell>{
+function loadCells(
+  mines: Matrix<boolean>,
+  known: Coordinate
+): Matrix<InternalCell> {
   const height = mines[0].length;
 
   const cells: InternalCell[] = [];
-  for(let x = 0; x < mines.length; x++){
-    for(let y = 0; y < height; y++){
+  for (let x = 0; x < mines.length; x++) {
+    for (let y = 0; y < height; y++) {
       const cell: InternalCell = {
-        stateKnown: (x === known[0] && y === known[1]),
+        stateKnown: x === known[0] && y === known[1],
         isMine: mines[x][y]
-      }
+      };
       cells.push(cell);
     }
   }
-  
+
   return chunk(cells, height);
 }
 

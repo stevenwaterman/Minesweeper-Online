@@ -1,10 +1,9 @@
 import React from "react";
 import "./Styles.scss";
 import { selectWidth, selectHeight, selectCoords } from "../board/Reducer";
-import { useSelector, Selector } from "../utils/Selector";
+import { useSelector } from "../utils/Selector";
 import CoordsSquare from "./CoordsSquare";
-import { Color } from "csstype";
-import { Constraint, constraintContains } from "../utils/Constraint";
+import { gridStyle } from "../utils/Styles";
 
 
 const Component: React.FC = () => {
@@ -13,18 +12,9 @@ const Component: React.FC = () => {
   const coords = useSelector(selectCoords);
 
   return (
-    <div
-      className="coordsContainer"
-      style={{
-        gridTemplateColumns: `repeat(${width}, 40px)`,
-        gridTemplateRows: `repeat(${height}, 40px)`
-      }}
-    >
+    <div className="coordsContainer" style={gridStyle(width, height)}>
       {coords.map(([x, y]) => (
-        <CoordsSquare
-          key={`${x},${y}`}
-          coordinate={[x,y]}
-        />
+        <CoordsSquare key={`${x},${y}`} coordinate={[x, y]} />
       ))}
     </div>
   );
