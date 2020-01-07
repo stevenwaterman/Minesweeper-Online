@@ -72,16 +72,13 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
   if (autoFlag && canFlag) flagConstraint(constraint);
 
   let className = "constraint";
-  if (canClearConstraint || canFlagConstraint) {
-    className += " clickable";
-  }
 
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode) {
     if (canClear) {
-      className += "clearable";
+      className += " clearable";
     } else if (canFlag) {
-      className += "flaggable";
+      className += " flaggable";
     }
   }
 

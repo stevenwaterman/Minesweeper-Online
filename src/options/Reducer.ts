@@ -8,6 +8,7 @@ type State = {
   autoClear: boolean;
   autoFlag: boolean;
   showRemaining: boolean;
+  showCoords: boolean;
 };
 
 const INITIAL_STATE: State = {
@@ -15,7 +16,8 @@ const INITIAL_STATE: State = {
   cheatMode: false,
   autoZero: true,
   autoClear: false,
-  autoFlag: false
+  autoFlag: false,
+  showCoords: false
 };
 
 // Reducer
@@ -39,3 +41,4 @@ export const selectAutoZero = selector(s => s.autoZero);
 export const selectAutoClear = selector(s => s.autoClear);
 export const selectAutoFlag = selector(s => s.autoFlag);
 export const selectShowRemaining = selector(s => s.showRemaining);
+export const selectShowCoords = selector(s => s.showCoords);

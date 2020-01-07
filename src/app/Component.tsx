@@ -4,12 +4,21 @@ import { Provider } from "react-redux";
 import "./Styles.scss";
 import Overlay from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
+import CoordsOverlay from "../coordsOverlay/CoordsOverlay";
 import Options from "../options/Options";
-import SelectedConstraints, { targetColorSelector, firstColorSelector, secondColorSelector } from "../constraints/components/SelectedConstraints";
-import ConstraintActions from "../constraints/components/ConstraintActions"
+import SelectedConstraints, {
+  targetColorSelector,
+  firstColorSelector,
+  secondColorSelector
+} from "../constraints/components/SelectedConstraints";
+import ConstraintActions from "../constraints/components/ConstraintActions";
 import ConstraintList from "../constraints/components/ConstraintList";
 import { store } from "./Store";
-import { selectTarget, selectFirst, selectSecond } from "../constraints/Selectors";
+import {
+  selectTarget,
+  selectFirst,
+  selectSecond
+} from "../constraints/Selectors";
 
 const App: React.FC = () => {
   return (
@@ -18,6 +27,7 @@ const App: React.FC = () => {
         <div className="leftColumn">
           <h1>Minesweeper</h1>
           <div className="board">
+            <CoordsOverlay />
             <Overlay
               selectConstraint={selectTarget}
               colorSelector={targetColorSelector}

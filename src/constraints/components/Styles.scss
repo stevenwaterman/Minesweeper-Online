@@ -15,15 +15,13 @@
       margin: 8px;
       padding: 8px;
       font-size: 24px;
+      cursor: pointer;
     }
     .flaggable {
       background-color: #faa;
     }
     .clearable {
       background-color: #afa;
-    }
-    .clickable {
-      cursor: "pointer";
     }
   }
 }

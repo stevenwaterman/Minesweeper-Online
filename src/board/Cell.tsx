@@ -67,7 +67,9 @@ const Component: React.FC<Props> = props => {
     );
   }
 
-  const onClick = () => {
+  const onClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (constraint === null) return;
     if (canClearConstraint(constraint)) return clearConstraint(constraint);
     if (canFlagConstraint(constraint)) return flagConstraint(constraint);
@@ -87,8 +89,9 @@ const Component: React.FC<Props> = props => {
   let text = "";
   const showRemaining = useSelector(selectShowRemaining);
   if (stateKnown) {
-    if (showRemaining && state !== "X" && constraint !== null) {
-      text = constraint.maxMines.toString();
+    if (showRemaining && state !== "X") {
+      const mines = constraint === null ? 0 : constraint.maxMines;
+      text = mines.toString();
     } else {
       text = state.toString();
     }

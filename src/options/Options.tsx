@@ -215,6 +215,16 @@ const Component: React.FC = () => {
           Load Save
         </button>
       </div>
+      <div
+        onMouseEnter={() =>
+          dispatch({ type: "SET_OPTION", option: "showCoords", value: true })
+        }
+        onMouseLeave={() =>
+          dispatch({ type: "SET_OPTION", option: "showCoords", value: false })
+        }
+      >
+        Show Coords
+      </div>
     </div>
   );
 };
