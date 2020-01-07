@@ -11,7 +11,7 @@ import {
 export const targetColorSelector = (constraint: Constraint) => {
   if (canClearConstraint(constraint)) return "#0f05";
   if (canFlagConstraint(constraint)) return "#f005";
-  return "#0005";
+  return "#0003";
 };
 
 export const firstColorSelector = (_: Constraint) => "#f905";

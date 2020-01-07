@@ -30,18 +30,24 @@ const Component: React.FC<Props> = ({
   const { coords, minMines, maxMines } = constraint;
   const cellCount = coords.length;
 
-  const cellsString = `cell${cellCount > 1 ? "s" : ""}`;
+  const cellsString = `Cell${cellCount > 1 ? "s" : ""}`;
   const exact = minMines === maxMines;
   const minesCount = `${minMines} ${exact ? "" : `to ${maxMines}`}`;
-  const minesString = maxMines === 1 ? "mine" : "mines";
+  const minesString = maxMines === 1 ? "Mine" : "Mines";
 
   return (
-      <div className="constraint" style={{ background: colorSelector(constraint) }}>
-        <div className="constraintName">{constraintName}</div>
-        <div className="constraintInfo">
-          {`${cellCount} ${cellsString} containing ${minesCount} ${minesString}`}{" "}
-        </div>
+    <div
+      className="constraint"
+      style={{ background: colorSelector(constraint) }}
+    >
+      <div className="constraintName">{constraintName}</div>
+      <div className="constraintInfo">
+        {`${cellCount} ${cellsString}`}
       </div>
+      <div className="constraintInfo">
+        {`${minesCount} ${minesString}`}
+      </div>
+    </div>
   );
 };
 

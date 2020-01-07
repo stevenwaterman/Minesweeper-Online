@@ -13,8 +13,10 @@ import {
   selectWidth,
   selectHeight,
   selectMineCount,
-  RegenerateBoardAction
+  RegenerateBoardAction,
+  LoadBoardAction
 } from "../board/Reducer";
+import { Coordinate } from "../utils/Cells";
 
 const Component: React.FC = () => {
   const showRemaining = useSelector(selectShowRemaining);
@@ -25,7 +27,29 @@ const Component: React.FC = () => {
   const width = useSelector(selectWidth);
   const height = useSelector(selectHeight);
   const mines = useSelector(selectMineCount);
-  const dispatch = useDispatch<SetOptionAction | RegenerateBoardAction>();
+  const dispatch = useDispatch<
+    SetOptionAction | RegenerateBoardAction | LoadBoardAction
+  >();
+
+  const save1 = {
+    mines: [
+      [false, false, false, true, false, false, false],
+      [false, false, false, true, false, true, true],
+      [false, false, false, false, false, false, true],
+      [false, false, false, false, false, false, true],
+      [false, true, false, false, true, false, false],
+      [false, false, false, false, false, false, true],
+      [false, true, true, true, true, false, true],
+      [false, false, false, false, false, false, false],
+      [false, false, false, false, true, false, true],
+      [false, false, false, false, false, true, false],
+      [false, false, false, false, true, true, false],
+      [false, true, false, true, false, false, false],
+      [false, true, false, false, false, false, true],
+      [false, false, false, true, true, false, false]
+    ],
+    start: [0, 0] as Coordinate
+  };
 
   return (
     <div>
@@ -45,7 +69,8 @@ const Component: React.FC = () => {
             }
           />
         </label>
-        </div><div>
+      </div>
+      <div>
         <label>
           Cheat Mode:
           <input
@@ -159,7 +184,7 @@ const Component: React.FC = () => {
         <label>
           Mines:
           <input
-            name="width"
+            name="mines"
             type="text"
             value={mines}
             onChange={e => {
@@ -183,6 +208,11 @@ const Component: React.FC = () => {
           }
         >
           Regenerate
+        </button>
+      </div>
+      <div>
+        <button onClick={() => dispatch({ type: "LOAD_BOARD", ...save1 })}>
+          Load Save
         </button>
       </div>
     </div>

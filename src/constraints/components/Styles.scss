@@ -1,9 +1,9 @@
 .constraintList {
   .listHeader {
-    margin: 0 auto;
+    margin: 10px auto;
     text-align: center;
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 24pt;
+    font-weight: 300;
   }
   .listBody {
     display: flex;
@@ -14,6 +14,16 @@
       text-align: center;
       margin: 8px;
       padding: 8px;
+      font-size: 24px;
+    }
+    .flaggable {
+      background-color: #faa;
+    }
+    .clearable {
+      background-color: #afa;
+    }
+    .clickable {
+      cursor: "pointer";
     }
   }
 }
@@ -24,14 +34,16 @@
   .constraint {
     border: 1px solid gray;
     text-align: center;
-    padding: 10px;
+    padding: 0px 10px 10px 10px;
     margin: 10px;
-    min-width: 200px;
+    width: 200px;
+    height: 100px;
+    font-size: 16pt;
   }
   .constraintName {
     padding-bottom: 10px;
-    font-weight: 700;
-    font-size: large;
+    font-weight: 300;
+    font-size: 18pt;
   }
 }
 
@@ -42,11 +54,13 @@
     margin: 8px;
     font-size: 16px;
     color: #333333;
-    font-weight: 500;
+    width: 150px;
+    height: 75px;
   }
 
   .enabled {
     background-color: #0f55;
     cursor: pointer;
+    font-size: 18px;
   }
 }

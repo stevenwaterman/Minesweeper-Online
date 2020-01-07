@@ -16,6 +16,7 @@ const App: React.FC = () => {
     <Provider store={store}>
       <div className="columns">
         <div className="leftColumn">
+          <h1>Minesweeper</h1>
           <div className="board">
             <Overlay
               selectConstraint={selectTarget}

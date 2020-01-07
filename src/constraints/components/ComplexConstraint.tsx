@@ -71,17 +71,17 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
   const autoFlag = useSelector(selectAutoFlag);
   if (autoFlag && canFlag) flagConstraint(constraint);
 
-  const style: CSSProperties = {};
+  let className = "constraint";
   if (canClearConstraint || canFlagConstraint) {
-    style.cursor = "pointer";
+    className += " clickable";
   }
 
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode) {
     if (canClear) {
-      style.background = "#5f5";
+      className += "clearable";
     } else if (canFlag) {
-      style.background = "#f55";
+      className += "flaggable";
     }
   }
 
@@ -95,8 +95,7 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
       onMouseLeave={() =>
         dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null })
       }
-      className="constraint"
-      style={style}
+      className={className}
     >
       <div>Cells: {cellCount}</div>
       <div>

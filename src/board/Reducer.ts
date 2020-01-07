@@ -20,7 +20,7 @@ type State = {
 };
 
 const INITIAL_STATE: State = {
-  cells: generateCells(10, 10, 10),
+  cells: generateCells(14, 10, 50),
   lost: false
 };
 
@@ -47,6 +47,23 @@ function generateCells(
   });
 
   const cells = shuffle([...clearCells, ...knownCells, ...mineCells]);
+  return chunk(cells, height);
+}
+
+function loadCells(mines: Matrix<boolean>, known: Coordinate): Matrix<InternalCell>{
+  const height = mines[0].length;
+
+  const cells: InternalCell[] = [];
+  for(let x = 0; x < mines.length; x++){
+    for(let y = 0; y < height; y++){
+      const cell: InternalCell = {
+        stateKnown: (x === known[0] && y === known[1]),
+        isMine: mines[x][y]
+      }
+      cells.push(cell);
+    }
+  }
+  
   return chunk(cells, height);
 }
 
@@ -78,6 +95,9 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
       state.cells = generateCells(width, height, mines);
     }
   )
+  .addCase("LOAD_BOARD", (state, { mines, start }: LoadBoardAction) => {
+    state.cells = loadCells(mines, start);
+  })
   .build();
 
 // Actions
@@ -87,6 +107,10 @@ export type RegenerateBoardAction = Action<"REGENERATE_BOARD"> & {
   width: number;
   height: number;
   mines: number;
+};
+export type LoadBoardAction = Action<"LOAD_BOARD"> & {
+  mines: Matrix<boolean>;
+  start: Coordinate;
 };
 
 // Selectors
@@ -102,9 +126,7 @@ export const selectHeight = extendSelector(
 
 export const selectMineCount = extendSelector(
   selectCells,
-  cells =>
-    cells.flatMap(row => row).filter(cell => cell.isMine)
-      .length
+  cells => cells.flatMap(row => row).filter(cell => cell.isMine).length
 );
 export const selectRemainingMineCount = extendSelector(
   selectCells,
