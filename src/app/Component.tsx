@@ -5,12 +5,11 @@ import "./Styles.scss";
 import Overlay from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
 import Options from "../options/Options";
-import SelectedConstraints from "../constraints/SelectedConstraints";
-import ConstraintActions from "../constraints/ConstraintActions"
-import ConstraintList from "../constraints/ConstraintList";
+import SelectedConstraints, { targetColorSelector, firstColorSelector, secondColorSelector } from "../constraints/components/SelectedConstraints";
+import ConstraintActions from "../constraints/components/ConstraintActions"
+import ConstraintList from "../constraints/components/ConstraintList";
 import { store } from "./Store";
-import { selectFirst, selectSecond, selectHover } from "../constraints/Reducer";
-import { canClearConstraint, canFlagConstraint } from "../utils/Constraint";
+import { selectTarget, selectFirst, selectSecond } from "../constraints/Selectors";
 
 const App: React.FC = () => {
   return (
@@ -19,20 +18,16 @@ const App: React.FC = () => {
         <div className="leftColumn">
           <div className="board">
             <Overlay
-              selectConstraint={selectHover}
-              colorSelector={constraint => {
-                if (canClearConstraint(constraint)) return "#00ff0050";
-                if (canFlagConstraint(constraint)) return "#ff000050";
-                return "#00000050";
-              }}
+              selectConstraint={selectTarget}
+              colorSelector={targetColorSelector}
             />
             <Overlay
               selectConstraint={selectFirst}
-              colorSelector={() => "#ff990050"}
+              colorSelector={firstColorSelector}
             />
             <Overlay
               selectConstraint={selectSecond}
-              colorSelector={() => "#0000ff50"}
+              colorSelector={secondColorSelector}
             />
             <Board />
           </div>

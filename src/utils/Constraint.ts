@@ -14,34 +14,27 @@ export function canFlagConstraint(constraint: Constraint): boolean {
   return constraint.minMines >= constraint.coords.length;
 }
 
-export function canSubtract(
-  big: Constraint | null,
-  small: Constraint | null
-): boolean {
-  if (big === null || small === null) return false;
-  if (big.coords.length <= small.coords.length) return false;
-
-  const minMines = big.minMines - small.maxMines;
-  const maxMines = big.maxMines - small.minMines;
-  if (minMines <= 0 && maxMines >= big.coords.length - small.coords.length)
-    return false;
-
-  return small.coords.every(coord => constraintContains(big, ...coord));
-}
-
 export function subtractConstraints(
-  big: Constraint,
-  small: Constraint
-): Constraint {
+  c1: Constraint | null,
+  c2: Constraint | null
+): Constraint | null {
+  if (c1 === null || c2 === null) return null;
+
+  const [big, small] =
+    c1.coords.length > c2.coords.length ? [c1, c2] : [c2, c1];
+  if (big.coords.length <= small.coords.length) return null;
+  if (small.coords.some(coord => !constraintContains(big, ...coord))) {
+    return null;
+  }
+
   const newCoords = big.coords.filter(
     ([x, y]) => !constraintContains(small, x, y)
   );
-
   const minMines = big.minMines - small.maxMines;
   const maxMines = big.maxMines - small.minMines;
-
   const clampedMin = Math.min(Math.max(minMines, 0), newCoords.length);
   const clampedMax = Math.min(Math.max(maxMines, 0), newCoords.length);
+  if (clampedMin === 0 && clampedMax === newCoords.length) return null;
 
   return {
     coords: newCoords,
@@ -50,7 +43,15 @@ export function subtractConstraints(
   };
 }
 
-export function mergeConstraints(c1: Constraint, c2: Constraint): Constraint {
+export function mergeConstraints(
+  c1: Constraint | null,
+  c2: Constraint | null
+): Constraint | null {
+  if (c1 === null || c2 === null) return null;
+  if (!constraintEquals(c1, c2)) return null;
+  if (c1.minMines <= c2.minMines && c1.maxMines >= c2.maxMines) return null;
+  if (c2.minMines <= c1.minMines && c2.maxMines >= c1.maxMines) return null;
+
   return {
     coords: c1.coords,
     minMines: Math.max(c1.minMines, c2.minMines),
@@ -58,58 +59,37 @@ export function mergeConstraints(c1: Constraint, c2: Constraint): Constraint {
   };
 }
 
-export function overlapConstraints(c1: Constraint, c2: Constraint): Constraint {
+export function overlapConstraints(
+  c1: Constraint | null,
+  c2: Constraint | null
+): Constraint | null {
+  if (c1 === null || c2 === null) return null;
+
   const overlap = getOverlap(c1, c2);
+  if (overlap.length === 0) return null;
 
   const c1RemainingCells = c1.coords.length - overlap.length;
-  const c1MinInOverlap = c1.minMines - c1RemainingCells;
-  const c1MaxInOverlap = c1.maxMines;
-
   const c2RemainingCells = c2.coords.length - overlap.length;
+  if (c1RemainingCells === 0) return null;
+  if (c2RemainingCells === 0) return null;
+
+  const c1MinInOverlap = c1.minMines - c1RemainingCells;
   const c2MinInOverlap = c2.minMines - c2RemainingCells;
+  const minInOverlap = Math.max(c1MinInOverlap, c2MinInOverlap);
+
+  const c1MaxInOverlap = c1.maxMines;
   const c2MaxInOverlap = c2.maxMines;
+  const maxInOverlap = Math.max(c1MaxInOverlap, c2MaxInOverlap);
 
-  const c1OverlapConstraint = {
-    coords: overlap,
-    minMines: c1MinInOverlap,
-    maxMines: c1MaxInOverlap
-  };
-  const c2OverlapConstraint = {
-    coords: overlap,
-    minMines: c2MinInOverlap,
-    maxMines: c2MaxInOverlap
-  };
-  const { coords, minMines, maxMines } = mergeConstraints(
-    c1OverlapConstraint,
-    c2OverlapConstraint
-  );
   const clamped = {
-    coords,
-    minMines: Math.min(Math.max(minMines, 0), coords.length),
-    maxMines: Math.min(Math.max(maxMines, 0), coords.length)
+    coords: overlap,
+    minMines: Math.min(Math.max(minInOverlap, 0), overlap.length),
+    maxMines: Math.min(Math.max(maxInOverlap, 0), overlap.length)
   };
 
-  return clamped;
-}
-
-export function canMerge(c1: Constraint, c2: Constraint): boolean {
-  return (
-    constraintEquals(c1, c2) &&
-    (c1.minMines > c2.minMines || c1.maxMines < c2.maxMines)
-  );
-}
-
-export function canOverlap(c1: Constraint, c2: Constraint): boolean {
-  const overlap = getOverlap(c1, c2);
-  const overlapSize = overlap.length;
-
-  const c1Removed = c1.coords.length - overlapSize;
-  const c2Removed = c2.coords.length - overlapSize;
-  if (c1Removed === 0) return false;
-  if (c2Removed === 0) return false;
-  const wouldProduce = overlapConstraints(c1, c2);
-  if(wouldProduce.minMines === 0 && wouldProduce.maxMines === wouldProduce.coords.length) return false;
-  return true;
+  if (clamped.minMines === 0 && clamped.maxMines === clamped.coords.length)
+    return null;
+  else return clamped;
 }
 
 export function getOverlap(c1: Constraint, c2: Constraint): Coordinate[] {

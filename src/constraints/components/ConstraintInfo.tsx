@@ -1,19 +1,22 @@
 import React from "react";
-import { useSelector, Selector } from "../utils/Selector";
-import { Constraint } from "../utils/Constraint";
+import { useSelector, Selector } from "../../utils/Selector";
+import { Constraint } from "../../utils/Constraint";
 import "./Styles.scss";
+import { Color } from "csstype";
 
 export type Props = {
   constraintName: string;
   constraintSelector: Selector<Constraint | null>;
+  colorSelector: (constraint: Constraint) => Color;
 };
 
 const Component: React.FC<Props> = ({
   constraintName,
-  constraintSelector
+  constraintSelector,
+  colorSelector,
 }: Props) => {
   const constraint = useSelector(constraintSelector);
-  if (constraint == null) {
+  if (constraint === null) {
     return (
       <>
         <div className="constraint">
@@ -33,14 +36,12 @@ const Component: React.FC<Props> = ({
   const minesString = maxMines === 1 ? "mine" : "mines";
 
   return (
-    <>
-      <div className="constraint" style={{ background: "#ffcc99" }}>
+      <div className="constraint" style={{ background: colorSelector(constraint) }}>
         <div className="constraintName">{constraintName}</div>
         <div className="constraintInfo">
           {`${cellCount} ${cellsString} containing ${minesCount} ${minesString}`}{" "}
         </div>
       </div>
-    </>
   );
 };
 

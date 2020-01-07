@@ -13,7 +13,7 @@ type State = {
 const INITIAL_STATE: State = {
   showRemaining: false,
   cheatMode: false,
-  autoZero: false,
+  autoZero: true,
   autoClear: false,
   autoFlag: false
 };

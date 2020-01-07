@@ -3,36 +3,54 @@ import {
   Constraint,
   canClearConstraint,
   canFlagConstraint
-} from "../utils/Constraint";
-import { useDispatch } from "../utils/Actions";
-import { SetHoverConstraintAction, SelectConstraintAction } from "./Reducer";
-import { ClearCellAction, FlagCellAction } from "../board/Reducer";
+} from "../../utils/Constraint";
+import { useDispatch } from "../../utils/Actions";
+import { ClearCellAction, FlagCellAction } from "../../board/Reducer";
 import "./Styles.scss";
-import { useSelector } from "../utils/Selector";
-import { selectAutoClear, selectAutoFlag, selectCheatMode } from "../options/Reducer";
+import { useSelector } from "../../utils/Selector";
+import {
+  selectAutoClear,
+  selectAutoFlag,
+  selectCheatMode
+} from "../../options/Reducer";
+import {
+  SelectConstraintAction,
+  DeleteConstraintAction,
+  SetTargetConstraintAction
+} from "../Actions";
 
 export type Props = {
   constraint: Constraint;
+  index?: number | null;
 };
 
-const Component: React.FC<Props> = ({ constraint }: Props) => {
+const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
   const { coords, minMines, maxMines } = constraint;
   const cellCount = coords.length;
   const dispatch = useDispatch<
-    | SetHoverConstraintAction
+    | SetTargetConstraintAction
     | SelectConstraintAction
     | ClearCellAction
     | FlagCellAction
+    | DeleteConstraintAction
   >();
 
-const canClear = canClearConstraint(constraint);
-const canFlag = canFlagConstraint(constraint);
+  const canClear = canClearConstraint(constraint);
+  const canFlag = canFlagConstraint(constraint);
 
   const onClick = () => {
     if (constraint === null) return;
     if (canClear) return clearConstraint(constraint);
     if (canFlag) return flagConstraint(constraint);
     return dispatch({ type: "SELECT_CONSTRAINT", constraint });
+  };
+
+  const onContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (index !== null) {
+      dispatch({ type: "DELETE_CONSTRAINT", index });
+    }
   };
 
   function clearConstraint(constraint: Constraint) {
@@ -61,20 +79,21 @@ const canFlag = canFlagConstraint(constraint);
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode) {
     if (canClear) {
-      style.background = "#00ff0050";
+      style.background = "#5f5";
     } else if (canFlag) {
-      style.background = "#ff000050";
+      style.background = "#f55";
     }
   }
 
   return (
     <div
       onClick={onClick}
+      onContextMenu={onContextMenu}
       onMouseEnter={() =>
-        dispatch({ type: "SET_HOVER_CONSTRAINT", constraint })
+        dispatch({ type: "SET_TARGET_CONSTRAINT", constraint })
       }
       onMouseLeave={() =>
-        dispatch({ type: "SET_HOVER_CONSTRAINT", constraint: null })
+        dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null })
       }
       className="constraint"
       style={style}

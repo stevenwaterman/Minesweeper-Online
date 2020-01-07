@@ -9,10 +9,6 @@ import {
 import { Coordinate } from "../utils/Cells";
 import React from "react";
 import "./Styles.scss";
-import {
-  SetHoverConstraintAction,
-  SelectConstraintAction
-} from "../constraints/Reducer";
 import { useDispatch } from "../utils/Actions";
 import {
   canClearConstraint,
@@ -26,6 +22,10 @@ import {
   selectAutoFlag,
   selectShowRemaining
 } from "../options/Reducer";
+import {
+  SelectConstraintAction,
+  SetTargetConstraintAction
+} from "../constraints/Actions";
 
 type Props = {
   coordinate: Coordinate;
@@ -37,27 +37,21 @@ const Component: React.FC<Props> = props => {
   const constraint = useArgSelector(selectConstraint, props);
 
   const dispatch = useDispatch<
-    | SetHoverConstraintAction
+    | SetTargetConstraintAction
     | SelectConstraintAction
     | ClearCellAction
     | FlagCellAction
   >();
 
-  const style: React.CSSProperties = {};
-  if (constraint !== null) style.cursor = "pointer";
-  if (!stateKnown) {
-    style.background = "#dddddd";
-  }
-  if (stateKnown && state === "X") {
-    style.background = "#ff9999";
-  }
+  let className = "cell";
+  if (constraint !== null) className += " clickable";
 
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode && constraint !== null) {
     if (canClearConstraint(constraint)) {
-      style.background = "#00ff0050";
+      className += " clearable";
     } else if (canFlagConstraint(constraint)) {
-      style.background = "#ff000050";
+      className += " flaggable";
     }
   }
 
@@ -93,32 +87,26 @@ const Component: React.FC<Props> = props => {
   let text = "";
   const showRemaining = useSelector(selectShowRemaining);
   if (stateKnown) {
-    if (state === "X") {
-      text = "X";
+    if (showRemaining && state !== "X" && constraint !== null) {
+      text = constraint.maxMines.toString();
     } else {
-      if (showRemaining) {
-        if (constraint !== null && constraint.maxMines !== 0) {
-          text = "" + constraint.maxMines;
-        }
-      } else if (state !== 0) {
-        text = "" + state;
-      }
+      text = state.toString();
     }
+    className += ` state${text}`;
   }
 
   return (
     <div
-      className="cell"
-      style={style}
+      className={className}
       onPointerEnter={
         constraint === null
           ? undefined
-          : () => dispatch({ type: "SET_HOVER_CONSTRAINT", constraint })
+          : () => dispatch({ type: "SET_TARGET_CONSTRAINT", constraint })
       }
       onPointerLeave={
         constraint === null
           ? undefined
-          : () => dispatch({ type: "SET_HOVER_CONSTRAINT", constraint: null })
+          : () => dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null })
       }
       onClick={onClick}
     >
