@@ -45,10 +45,10 @@ const real: Save = {
 const basicTraining: Save = {
   mines: [
     [0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0],
     [0, 0, 1, 0, 0],
-    [0, 0, 1, 0, 0]
+    [0, 0, 1, 1, 1],
+    [0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0]
   ] as Matrix<0 | 1>,
   start: [0, 0] as Coordinate,
   options: {
@@ -67,9 +67,10 @@ const basicTraining: Save = {
 
 const subtractionTraining1: Save = {
   mines: [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [1, 0, 0, 1]
+    [0, 0, 1],
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 1]
   ] as Matrix<0 | 1>,
   start: [0, 0] as Coordinate,
   options: {

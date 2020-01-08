@@ -112,7 +112,7 @@ export type RegenerateBoardAction = Action<"REGENERATE_BOARD"> & {
   height: number;
   mines: number;
 };
-export type LoadBoardAction = Action<"LOAD_BOARD"> & Save
+export type LoadBoardAction = Action<"LOAD_BOARD"> & Save;
 
 // Selectors
 export const selectSlice = sliceSelector("board");
@@ -132,8 +132,12 @@ export const selectMineCount = extendSelector(
 export const selectRemainingMineCount = extendSelector(
   selectCells,
   cells =>
-    cells.flatMap(row => row).filter(cell => cell.isMine && !cell.stateKnown)
-      .length
+    cells
+      .flatMap(column => column)
+      .filter(cell => cell.isMine && !cell.stateKnown).length
+);
+export const selectHasWon = extendSelector(selectCells, cells =>
+  cells.every(column => column.every(cell => cell.stateKnown))
 );
 
 function getInternalCell(
