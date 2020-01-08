@@ -1,7 +1,6 @@
 import { ReducerBuilder } from "../utils/Reducer";
 import {
   Constraint,
-  constraintEquals,
   cellFlagged,
   cellCleared
 } from "../utils/Constraint";
@@ -13,16 +12,16 @@ import {
 } from "../board/Reducer";
 import {
   SelectConstraintAction,
-  SetTargetConstraintAction,
+  SetTargetConstraintsAction,
   ClearSelectedConstraintsAction,
   DeleteConstraintAction,
-  AddConstraintAction
+  AddConstraintsAction
 } from "./Actions";
 
 type State = {
   first: Constraint | null;
   second: Constraint | null;
-  target: Constraint | null;
+  targets: Array<Constraint>;
 
   complexConstraints: Array<Constraint>;
 };
@@ -30,10 +29,16 @@ type State = {
 const INITIAL_STATE: State = {
   first: null,
   second: null,
-  target: null,
+  targets: [],
 
   complexConstraints: []
 };
+
+function resetSelected(state: State){
+  state.first = null;
+  state.second = null;
+  state.targets = [];
+}
 
 // Reducer
 export const reducer = ReducerBuilder.create(INITIAL_STATE)
@@ -43,7 +48,7 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
              if (state.first === constraint) return;
              if (state.second === constraint) return;
 
-             state.target = null;
+             state.targets = [];
 
              if (state.first === null) {
                state.first = constraint;
@@ -53,36 +58,25 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
            }
          )
          .addCase(
-           "SET_TARGET_CONSTRAINT",
-           (state, { constraint }: SetTargetConstraintAction) => {
-             if (constraint !== null) {
-               if (constraint.coords.length === 0) return;
-               if (constraintEquals(state.first, constraint)) return;
-               if (constraintEquals(state.second, constraint)) return;
-             }
-             state.target = constraint;
+           "SET_TARGET_CONSTRAINTS",
+           (state, { constraints }: SetTargetConstraintsAction) => {
+             state.targets = constraints.filter(c => c !== null) as Constraint[];
            }
          )
          .addCase(
            "CLEAR_SELECTED_CONSTRAINTS",
            (state, _: ClearSelectedConstraintsAction) => {
-             state.first = null;
-             state.second = null;
-             state.target = null;
+             resetSelected(state);
            }
          )
          .addCase("CLEAR_CELL", (state, { coordinate }: ClearCellAction) => {
-           state.first = null;
-           state.second = null;
-           state.target = null;
+           resetSelected(state);
            state.complexConstraints = state.complexConstraints
              .map(constraint => cellCleared(constraint, ...coordinate))
              .filter(constraint => constraint !== null) as Constraint[];
          })
          .addCase("FLAG_CELL", (state, { coordinate }: FlagCellAction) => {
-           state.first = null;
-           state.second = null;
-           state.target = null;
+           resetSelected(state);
            state.complexConstraints = state.complexConstraints
              .map(constraint => cellFlagged(constraint, ...coordinate))
              .filter(constraint => constraint !== null) as Constraint[];
@@ -97,15 +91,13 @@ export const reducer = ReducerBuilder.create(INITIAL_STATE)
            "DELETE_CONSTRAINT",
            (state, { index }: DeleteConstraintAction) => {
              state.complexConstraints.splice(index, 1);
-             state.first = null;
-             state.second = null;
-             state.target = null;
+             resetSelected(state);
            }
          )
          .addCase(
-           "ADD_CONSTRAINT",
-           (state, { constraint }: AddConstraintAction) => {
-             state.complexConstraints.push(constraint);
+           "ADD_CONSTRAINTS",
+           (state, { constraints }: AddConstraintsAction) => {
+             state.complexConstraints.push(...constraints);
            }
          )
          .build();

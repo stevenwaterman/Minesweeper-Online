@@ -1,8 +1,10 @@
 import React from "react";
 import {
   Constraint,
-  canClearConstraint,
-  canFlagConstraint
+  canClear,
+  canFlag,
+  clearConstraint,
+  flagConstraint
 } from "../../utils/Constraint";
 import { useDispatch } from "../../utils/Actions";
 import { ClearCellAction, FlagCellAction } from "../../board/Reducer";
@@ -16,7 +18,7 @@ import {
 import {
   SelectConstraintAction,
   DeleteConstraintAction,
-  SetTargetConstraintAction
+  SetTargetConstraintsAction
 } from "../Actions";
 
 export type Props = {
@@ -28,20 +30,20 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
   const { coords, minMines, maxMines } = constraint;
   const cellCount = coords.length;
   const dispatch = useDispatch<
-    | SetTargetConstraintAction
+    | SetTargetConstraintsAction
     | SelectConstraintAction
     | ClearCellAction
     | FlagCellAction
     | DeleteConstraintAction
   >();
 
-  const canClear = canClearConstraint(constraint);
-  const canFlag = canFlagConstraint(constraint);
+  const clearable = canClear(constraint);
+  const flaggable = canFlag(constraint);
 
   const onClick = () => {
     if (constraint === null) return;
-    if (canClear) return clearConstraint(constraint);
-    if (canFlag) return flagConstraint(constraint);
+    if (clearable) return clearConstraint(dispatch, constraint);
+    if (flaggable) return flagConstraint(dispatch, constraint);
     return dispatch({ type: "SELECT_CONSTRAINT", constraint });
   };
 
@@ -53,31 +55,19 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
     }
   };
 
-  function clearConstraint(constraint: Constraint) {
-    constraint.coords.forEach(coordinate =>
-      dispatch({ type: "CLEAR_CELL", coordinate })
-    );
-  }
-
-  function flagConstraint(constraint: Constraint) {
-    constraint.coords.forEach(coordinate =>
-      dispatch({ type: "FLAG_CELL", coordinate })
-    );
-  }
-
   const autoClear = useSelector(selectAutoClear);
-  if (autoClear && canClear) clearConstraint(constraint);
+  if (autoClear && clearable) clearConstraint(dispatch, constraint);
 
   const autoFlag = useSelector(selectAutoFlag);
-  if (autoFlag && canFlag) flagConstraint(constraint);
+  if (autoFlag && flaggable) flagConstraint(dispatch, constraint);
 
   let className = "constraint";
 
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode) {
-    if (canClear) {
+    if (clearable) {
       className += " clearable";
-    } else if (canFlag) {
+    } else if (flaggable) {
       className += " flaggable";
     }
   }
@@ -87,10 +77,10 @@ const Component: React.FC<Props> = ({ constraint, index = null }: Props) => {
       onClick={onClick}
       onContextMenu={onContextMenu}
       onMouseEnter={() =>
-        dispatch({ type: "SET_TARGET_CONSTRAINT", constraint })
+        dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints: [constraint] })
       }
       onMouseLeave={() =>
-        dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null })
+        dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints: [] })
       }
       className={className}
     >

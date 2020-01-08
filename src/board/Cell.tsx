@@ -11,8 +11,8 @@ import React from "react";
 import "./Styles.scss";
 import { useDispatch } from "../utils/Actions";
 import {
-  canClearConstraint,
-  canFlagConstraint,
+  canClear,
+  canFlag,
   Constraint
 } from "../utils/Constraint";
 import {
@@ -24,7 +24,7 @@ import {
 } from "../options/Reducer";
 import {
   SelectConstraintAction,
-  SetTargetConstraintAction
+  SetTargetConstraintsAction
 } from "../constraints/Actions";
 
 type Props = {
@@ -37,7 +37,7 @@ const Component: React.FC<Props> = props => {
   const constraint = useArgSelector(selectConstraint, props);
 
   const dispatch = useDispatch<
-    | SetTargetConstraintAction
+    | SetTargetConstraintsAction
     | SelectConstraintAction
     | ClearCellAction
     | FlagCellAction
@@ -48,9 +48,9 @@ const Component: React.FC<Props> = props => {
 
   const cheatMode = useSelector(selectCheatMode);
   if (cheatMode && constraint !== null) {
-    if (canClearConstraint(constraint)) {
+    if (canClear(constraint)) {
       className += " clearable";
-    } else if (canFlagConstraint(constraint)) {
+    } else if (canFlag(constraint)) {
       className += " flaggable";
     }
   }
@@ -71,8 +71,8 @@ const Component: React.FC<Props> = props => {
     e.preventDefault();
     e.stopPropagation();
     if (constraint === null) return;
-    if (canClearConstraint(constraint)) return clearConstraint(constraint);
-    if (canFlagConstraint(constraint)) return flagConstraint(constraint);
+    if (canClear(constraint)) return clearConstraint(constraint);
+    if (canFlag(constraint)) return flagConstraint(constraint);
     return dispatch({ type: "SELECT_CONSTRAINT", constraint });
   };
 
@@ -81,9 +81,9 @@ const Component: React.FC<Props> = props => {
   const autoFlag = useSelector(selectAutoFlag);
   if (stateKnown && constraint !== null) {
     if (autoZero && state === 0) clearConstraint(constraint);
-    if (autoClear && canClearConstraint(constraint))
+    if (autoClear && canClear(constraint))
       clearConstraint(constraint);
-    if (autoFlag && canFlagConstraint(constraint)) flagConstraint(constraint);
+    if (autoFlag && canFlag(constraint)) flagConstraint(constraint);
   }
 
   let text = "";
@@ -104,12 +104,12 @@ const Component: React.FC<Props> = props => {
       onPointerEnter={
         constraint === null
           ? undefined
-          : () => dispatch({ type: "SET_TARGET_CONSTRAINT", constraint })
+          : () => dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints: [constraint] })
       }
       onPointerLeave={
         constraint === null
           ? undefined
-          : () => dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null })
+          : () => dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints: [] })
       }
       onClick={onClick}
     >

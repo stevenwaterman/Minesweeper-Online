@@ -2,23 +2,19 @@ import React from "react";
 import { Provider } from "react-redux";
 
 import "./Styles.scss";
-import Overlay from "../hover/ConstraintOverlay";
+import Overlay, { targetColor, firstColor, secondColor } from "../hover/ConstraintOverlay";
 import Board from "../board/Board";
 import CoordsOverlay from "../coordsOverlay/CoordsOverlay";
 import AllOptions from "../options/AllOptionsPanel";
 import Title from "./Title";
-import SelectedConstraints, {
-  targetColorSelector,
-  firstColorSelector,
-  secondColorSelector
-} from "../constraints/components/SelectedConstraints";
+import SelectedConstraints from "../constraints/components/SelectedConstraints";
 import ConstraintActions from "../constraints/components/ConstraintActions";
 import ConstraintList from "../constraints/components/ConstraintList";
 import { store } from "./Store";
 import {
-  selectTarget,
-  selectFirst,
-  selectSecond
+  selectTargets,
+  selectFirstWrapped,
+  selectSecondWrapped
 } from "../constraints/Selectors";
 
 const App: React.FC = () => {
@@ -30,16 +26,16 @@ const App: React.FC = () => {
           <div className="board">
             <CoordsOverlay />
             <Overlay
-              selectConstraint={selectTarget}
-              colorSelector={targetColorSelector}
+              selectConstraints={selectTargets}
+              colorSelector={targetColor}
             />
             <Overlay
-              selectConstraint={selectFirst}
-              colorSelector={firstColorSelector}
+              selectConstraints={selectFirstWrapped}
+              colorSelector={firstColor}
             />
             <Overlay
-              selectConstraint={selectSecond}
-              colorSelector={secondColorSelector}
+              selectConstraints={selectSecondWrapped}
+              colorSelector={secondColor}
             />
             <Board />
           </div>

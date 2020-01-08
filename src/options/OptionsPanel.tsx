@@ -8,7 +8,8 @@ import {
   selectShowSubtraction,
   selectShowOverlap,
   selectShowMerge,
-  selectShowBoardConstraint
+  selectShowBoardConstraint,
+  selectResolveComplex
 } from "./Reducer";
 import OptionCheckbox from "./OptionCheckbox";
 import "./Styles.scss";
@@ -40,6 +41,11 @@ const Component: React.FC = () => {
         selector={selectAutoFlag}
         option="autoFlag"
         text="Auto Flag"
+      />
+      <OptionCheckbox
+        selector={selectResolveComplex}
+        option="resolveComplex"
+        text="Resolve Complex"
       />
       <OptionCheckbox
         selector={selectShowSubtraction}

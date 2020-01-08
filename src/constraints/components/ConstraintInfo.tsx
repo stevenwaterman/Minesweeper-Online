@@ -6,27 +6,11 @@ import { Color } from "csstype";
 
 export type Props = {
   constraintName: string;
-  constraintSelector: Selector<Constraint | null>;
-  colorSelector: (constraint: Constraint) => Color;
+  constraintsSelector: Selector<Array<Constraint | null>>;
+  colorSelector: (constraints: Constraint[]) => Color;
 };
 
-const Component: React.FC<Props> = ({
-  constraintName,
-  constraintSelector,
-  colorSelector,
-}: Props) => {
-  const constraint = useSelector(constraintSelector);
-  if (constraint === null) {
-    return (
-      <>
-        <div className="constraint">
-          <div className="constraintName">{constraintName}</div>
-          <div className="constraintEmpty">No constraint selected</div>
-        </div>
-      </>
-    );
-  }
-
+function getConstraintComplex(constraint: Constraint) {
   const { coords, minMines, maxMines } = constraint;
   const cellCount = coords.length;
 
@@ -34,19 +18,53 @@ const Component: React.FC<Props> = ({
   const exact = minMines === maxMines;
   const minesCount = `${minMines} ${exact ? "" : `to ${maxMines}`}`;
   const minesString = maxMines === 1 ? "Mine" : "Mines";
+  return (
+    <div className="constraintInfo">
+      <div>{`${cellCount} ${cellsString}`}</div>
+      <div>{`${minesCount} ${minesString}`}</div>
+    </div>
+  );
+}
+
+function getConstraintSimple(constraint: Constraint) {
+  const { coords, minMines, maxMines } = constraint;
+  const cellCount = coords.length;
+
+  const exact = minMines === maxMines;
+  const minesCount = `${minMines}${exact ? "" : `-${maxMines}`}`;
+  return (
+    <div className="constraintInfo">
+      <div>{`${cellCount}c ${minesCount}m`}</div>
+    </div>
+  );
+}
+
+function getConstraintInfo(constraints: Constraint[]) {
+  if (constraints.length === 0) {
+    return <div className="constraintEmpty">Nothing selected</div>;
+  }
+  if (constraints.length === 1) {
+    return getConstraintComplex(constraints[0]);
+  }
+  return constraints.map(c => getConstraintSimple(c));
+}
+
+const Component: React.FC<Props> = ({
+  constraintName,
+  constraintsSelector,
+  colorSelector
+}: Props) => {
+  const constraints = useSelector(constraintsSelector).filter(
+    c => c !== null
+  ) as Constraint[];
 
   return (
     <div
       className="constraint"
-      style={{ background: colorSelector(constraint) }}
+      style={{ background: colorSelector(constraints) }}
     >
       <div className="constraintName">{constraintName}</div>
-      <div className="constraintInfo">
-        {`${cellCount} ${cellsString}`}
-      </div>
-      <div className="constraintInfo">
-        {`${minesCount} ${minesString}`}
-      </div>
+      {getConstraintInfo(constraints)}
     </div>
   );
 };

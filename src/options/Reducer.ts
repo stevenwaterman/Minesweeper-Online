@@ -1,6 +1,7 @@
 import { ReducerBuilder } from "../utils/Reducer";
 import { Action } from "@reduxjs/toolkit";
 import { sliceSelector, selectorCreator } from "../utils/Selector";
+import { LoadBoardAction } from "../board/Reducer";
 
 export type State = {
   cheatMode: boolean;
@@ -14,6 +15,7 @@ export type State = {
   showMerge: boolean;
   showBoardConstraint: boolean;
   showOptions: boolean;
+  resolveComplex: boolean;
 };
 
 const INITIAL_STATE: State = {
@@ -27,13 +29,17 @@ const INITIAL_STATE: State = {
   showOverlap: false,
   showMerge: false,
   showBoardConstraint: false,
-  showOptions: false
+  showOptions: false,
+  resolveComplex: false
 };
 
 // Reducer
 export const reducer = ReducerBuilder.create(INITIAL_STATE)
   .addCase("SET_OPTION", (state, { option, value }: SetOptionAction) => {
     state[option] = value;
+  })
+  .addCase("LOAD_BOARD", (state, {options}: LoadBoardAction) => {
+    Object.assign(state, options)
   })
   .build();
 
@@ -58,3 +64,4 @@ export const selectShowMerge = selector(s => s.showMerge);
 export const selectShowComplexConstraints = selector(s => s.showSubtraction || s.showOverlap || s.showMerge);
 export const selectShowBoardConstraint = selector(s => s.showBoardConstraint);
 export const selectShowOptions = selector(s => s.showOptions);
+export const selectResolveComplex = selector(s => s.resolveComplex);

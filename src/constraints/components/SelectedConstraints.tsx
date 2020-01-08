@@ -1,40 +1,49 @@
 import ConstraintInfo from "./ConstraintInfo";
 import "./Styles.scss";
 import React from "react";
-import { selectTarget, selectFirst, selectSecond } from "../Selectors";
 import {
-  Constraint,
-  canClearConstraint,
-  canFlagConstraint
-} from "../../utils/Constraint";
+  selectTargets,
+  selectSecondWrapped,
+  selectFirstWrapped
+} from "../Selectors";
+import { Constraint, canClear, canFlag } from "../../utils/Constraint";
+import { Color } from "csstype";
 
-export const targetColorSelector = (constraint: Constraint) => {
-  if (canClearConstraint(constraint)) return "#0f05";
-  if (canFlagConstraint(constraint)) return "#f005";
-  return "#0003";
-};
+function targetColor(constraints: Constraint[]): Color {
+  if (constraints.some(c => canClear(c))) return "#0f05";
 
-export const firstColorSelector = (_: Constraint) => "#f905";
+  if (constraints.some(c => canFlag(c))) return "#f005";
 
-export const secondColorSelector = (_: Constraint) => "#09f5";
+  return "#ddd";
+}
+
+function firstColor(constraints: Constraint[]): Color {
+  if (constraints.length === 0) return "#ddd";
+  else return "#fc9";
+}
+
+function secondColor(constraints: Constraint[]): Color {
+  if (constraints.length === 0) return "#ddd";
+  else return "#9cf";
+}
 
 const Component: React.FC = () => {
   return (
     <div className="selectedConstraints">
       <ConstraintInfo
         constraintName="Constraint 1"
-        constraintSelector={selectFirst}
-        colorSelector={firstColorSelector}
+        constraintsSelector={selectFirstWrapped}
+        colorSelector={firstColor}
       />
       <ConstraintInfo
         constraintName="Constraint 2"
-        constraintSelector={selectSecond}
-        colorSelector={secondColorSelector}
+        constraintsSelector={selectSecondWrapped}
+        colorSelector={secondColor}
       />
       <ConstraintInfo
-        constraintName="Target"
-        constraintSelector={selectTarget}
-        colorSelector={targetColorSelector}
+        constraintName="Targets"
+        constraintsSelector={selectTargets}
+        colorSelector={targetColor}
       />
     </div>
   );

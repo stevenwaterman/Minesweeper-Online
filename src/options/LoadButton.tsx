@@ -1,16 +1,12 @@
 import React from "react";
 import { useDispatch } from "../utils/Actions";
-import { Coordinate } from "../utils/Cells";
-import { Matrix } from "../utils/Lists";
 import { LoadBoardAction } from "../board/Reducer";
 import "./Styles.scss";
+import { Save } from "./LoadPanel";
 
 type Props = {
   name: string;
-  save: {
-    mines: Matrix<0 | 1>;
-    start: Coordinate;
-  };
+  save: Save
 };
 
 const Component: React.FC<Props> = ({ name, save }) => {

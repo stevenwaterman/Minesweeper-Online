@@ -13,8 +13,8 @@ const Component: React.FC = () => {
 
   return (
     <div className="coordsContainer" style={gridStyle(width, height)}>
-      {coords.map(([x, y]) => (
-        <CoordsSquare key={`${x},${y}`} coordinate={[x, y]} />
+      {coords.map(([x,y], idx) => (
+        <CoordsSquare key={`${x},${y}`} index={idx} />
       ))}
     </div>
   );

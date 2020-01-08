@@ -4,8 +4,10 @@ import { subtractConstraints, mergeConstraints, overlapConstraints } from "../ut
 export const selectSlice = sliceSelector("constraints");
 export const selector = selectorCreator(selectSlice);
 export const selectFirst = selector(s => s.first);
+export const selectFirstWrapped = selector(s => s.first === null ? [] : [s.first]);
 export const selectSecond = selector(s => s.second);
-export const selectTarget = selector(s => s.target);
+export const selectSecondWrapped = selector(s => s.second === null ? [] : [s.second]);
+export const selectTargets = selector(s => s.targets);
 export const selectAnySelected = selector(
   s => s.first !== null || s.second !== null
 );

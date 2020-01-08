@@ -8,6 +8,7 @@ import {
   extendSelector
 } from "../utils/Selector";
 import { Matrix, shuffle, chunk } from "../utils/Lists";
+import { Save } from "../options/LoadPanel";
 
 type InternalCell = {
   stateKnown: boolean;
@@ -111,10 +112,7 @@ export type RegenerateBoardAction = Action<"REGENERATE_BOARD"> & {
   height: number;
   mines: number;
 };
-export type LoadBoardAction = Action<"LOAD_BOARD"> & {
-  mines: Matrix<0 | 1>;
-  start: Coordinate;
-};
+export type LoadBoardAction = Action<"LOAD_BOARD"> & Save
 
 // Selectors
 export const selectSlice = sliceSelector("board");

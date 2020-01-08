@@ -1,48 +1,68 @@
 import React from "react";
 import "./Styles.scss";
-import { Constraint } from "../../utils/Constraint";
+import { Constraint, canClear, canFlag, clearConstraint, flagConstraint } from "../../utils/Constraint";
 import { useDispatch } from "../../utils/Actions";
 import {
-  AddConstraintAction,
-  SetTargetConstraintAction,
+  AddConstraintsAction,
+  SetTargetConstraintsAction,
   ClearSelectedConstraintsAction
 } from "../Actions";
+import { useSelector } from "../../utils/Selector";
+import { ClearCellAction, FlagCellAction } from "../../board/Reducer";
+import { selectResolveComplex } from "../../options/Reducer";
 
 type Props = {
-  constraint: Constraint | null;
+  constraints: Array<Constraint>;
   text: string;
 };
 
-const Component: React.FC<Props> = ({ text, constraint }) => {
+const Component: React.FC<Props> = ({ text, constraints }) => {
   const dispatch = useDispatch<
-    | AddConstraintAction
-    | SetTargetConstraintAction
+    | AddConstraintsAction
+    | SetTargetConstraintsAction
     | ClearSelectedConstraintsAction
+    | ClearCellAction
+    | FlagCellAction
   >();
+  const resolveComplex = useSelector(selectResolveComplex);
 
-  const addConstraint = (e: React.MouseEvent) => {
+  const addConstraints = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (constraint === null) return;
-    dispatch({ type: "ADD_CONSTRAINT", constraint });
+    if (constraints.length === 0) return;
     dispatch({ type: "CLEAR_SELECTED_CONSTRAINTS" });
+    if (resolveComplex) {
+      const clearable = constraints.filter(c => canClear(c));
+      clearable.forEach(c => clearConstraint(dispatch, c));
+
+      const flaggable = constraints.filter(c => canFlag(c));
+      flaggable.forEach(c => flagConstraint(dispatch, c));
+
+      const nonSolvable = constraints.filter(c => !canClear(c) && !canFlag(c));
+      dispatch({ type: "ADD_CONSTRAINTS", constraints: nonSolvable });
+    } else {
+      dispatch({ type: "ADD_CONSTRAINTS", constraints });
+    }
   };
-  const setTargetConstraint = () => {
-    if (constraint === null) return;
-    dispatch({ type: "SET_TARGET_CONSTRAINT", constraint });
+  const setTargetConstraints = () => {
+    if (constraints.length === 0) return;
+    dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints });
   };
-  const clearTargetConstraint = () => {
-    if (constraint === null) return;
-    dispatch({ type: "SET_TARGET_CONSTRAINT", constraint: null });
+  const clearTargetConstraints = () => {
+    if (constraints.length === 0) return;
+    dispatch({ type: "SET_TARGET_CONSTRAINTS", constraints: [] });
   };
 
-  const className = `constraintButton${constraint === null ? "" : " enabled"}`;
+  let className = "constraintButton";
+  if (constraints.length !== 0) {
+    className += " enabled";
+  }
 
   return (
     <button
-      onClick={addConstraint}
-      onMouseEnter={setTargetConstraint}
-      onMouseLeave={clearTargetConstraint}
+      onClick={addConstraints}
+      onMouseEnter={setTargetConstraints}
+      onMouseLeave={clearTargetConstraints}
       className={className}
     >
       {text}
