@@ -131,7 +131,7 @@ const reduceTraining1: Save = {
     resolveComplex: true,
     showSubtraction: true,
     showReduce: true,
-    showMerge: false,
+    showMerge: true,
     showBoardConstraint: false
   }
 };
@@ -155,7 +155,7 @@ const reduceTraining2: Save = {
     resolveComplex: true,
     showSubtraction: true,
     showReduce: true,
-    showMerge: false,
+    showMerge: true,
     showBoardConstraint: false
   }
 };
@@ -178,8 +178,8 @@ const wholeBoardTraining: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showReduce: false,
-    showMerge: false,
+    showReduce: true,
+    showMerge: true,
     showBoardConstraint: true
   }
 };
