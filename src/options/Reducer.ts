@@ -11,7 +11,7 @@ export type State = {
   showRemaining: boolean;
   showCoords: boolean;
   showSubtraction: boolean;
-  showOverlap: boolean;
+  showReduce: boolean;
   showMerge: boolean;
   showBoardConstraint: boolean;
   showOptions: boolean;
@@ -26,7 +26,7 @@ const INITIAL_STATE: State = {
   autoFlag: false,
   showCoords: false,
   showSubtraction: false,
-  showOverlap: false,
+  showReduce: false,
   showMerge: false,
   showBoardConstraint: false,
   showOptions: false,
@@ -59,9 +59,9 @@ export const selectAutoFlag = selector(s => s.autoFlag);
 export const selectShowRemaining = selector(s => s.showRemaining);
 export const selectShowCoords = selector(s => s.showCoords);
 export const selectShowSubtraction = selector(s => s.showSubtraction);
-export const selectShowOverlap = selector(s => s.showOverlap);
+export const selectShowReduce = selector(s => s.showReduce);
 export const selectShowMerge = selector(s => s.showMerge);
-export const selectShowComplexConstraints = selector(s => s.showSubtraction || s.showOverlap || s.showMerge);
+export const selectShowComplexConstraints = selector(s => s.showSubtraction || s.showReduce || s.showMerge);
 export const selectShowBoardConstraint = selector(s => s.showBoardConstraint);
 export const selectShowOptions = selector(s => s.showOptions);
 export const selectResolveComplex = selector(s => s.resolveComplex);

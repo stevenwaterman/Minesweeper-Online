@@ -1,5 +1,5 @@
 import { sliceSelector, selectorCreator } from "../utils/Selector";
-import { subtractConstraints, mergeConstraints, overlapConstraints } from "../utils/Constraint";
+import { subtractConstraints, mergeConstraints, reduceConstraint } from "../utils/Constraint";
 
 export const selectSlice = sliceSelector("constraints");
 export const selector = selectorCreator(selectSlice);
@@ -17,7 +17,7 @@ export const selectSubtract = selector(
 export const selectMerge = selector(
   s => mergeConstraints(s.first, s.second)
 );
-export const selectOverlap = selector(
-  s => overlapConstraints(s.first, s.second)
+export const selectReduce = selector(
+  s => reduceConstraint(s.first)
 );
 export const selectComplexConstraints = selector(s => s.complexConstraints);

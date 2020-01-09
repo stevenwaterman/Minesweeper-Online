@@ -29,9 +29,7 @@ export function subtractConstraints(
     return null;
   }
 
-  const newCoords = big.coords.filter(
-    ([x, y]) => !inConstraint(small, x, y)
-  );
+  const newCoords = big.coords.filter(([x, y]) => !inConstraint(small, x, y));
   const minMines = big.minMines - small.maxMines;
   const maxMines = big.maxMines - small.minMines;
   const clampedMin = Math.min(Math.max(minMines, 0), newCoords.length);
@@ -61,44 +59,18 @@ export function mergeConstraints(
   };
 }
 
-export function overlapConstraints(
-  c1: Constraint | null,
-  c2: Constraint | null
-): [Constraint | null, Constraint | null, Constraint | null] {
-  if (c1 === null || c2 === null) return [null, null, null];
+export function reduceConstraint(c1: Constraint | null): Constraint[] {
+  if (c1 === null) return [];
 
-  const overlap = getOverlap(c1, c2);
-  if (overlap.length === 0) return [null, null, null];
+  const cellCount = c1.coords.length - 1;
+  const min = Math.min(Math.max(c1.minMines - 1, 0), cellCount);
+  const max = Math.min(c1.maxMines, cellCount);
+  if (min === 0 && max === cellCount) return [];
 
-  const c1RemainingCells = c1.coords.length - overlap.length;
-  const c2RemainingCells = c2.coords.length - overlap.length;
-  if (c1RemainingCells === 0) return [null, null, null];
-  if (c2RemainingCells === 0) return [null, null, null];
-
-  const c1MinInOverlap = c1.minMines - c1RemainingCells;
-  const c2MinInOverlap = c2.minMines - c2RemainingCells;
-  const minInOverlap = Math.max(c1MinInOverlap, c2MinInOverlap);
-
-  const c1MaxInOverlap = c1.maxMines;
-  const c2MaxInOverlap = c2.maxMines;
-  const maxInOverlap = Math.max(c1MaxInOverlap, c2MaxInOverlap);
-
-  const center = {
-    coords: overlap,
-    minMines: Math.min(Math.max(minInOverlap, 0), overlap.length),
-    maxMines: Math.min(Math.max(maxInOverlap, 0), overlap.length)
-  };
-
-  if (center.minMines === 0 && center.maxMines === center.coords.length)
-    return [null, null, null];
-  
-  const left = subtractConstraints(c1, center);
-  const right = subtractConstraints(c2, center);
-  return [left, center, right];
-}
-
-function getOverlap(c1: Constraint, c2: Constraint): Coordinate[] {
-  return c1.coords.filter(([x, y]) => inConstraint(c2, x, y));
+  const output: Constraint[] = c1.coords
+    .map(([x1, y1]) => c1.coords.filter(([x2, y2]) => x1 !== x2 || y1 !== y2))
+    .map(coords => ({ coords: coords, minMines: min, maxMines: max }));
+  return output;
 }
 
 export function inConstraint(

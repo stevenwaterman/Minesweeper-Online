@@ -6,7 +6,7 @@ import {
   selectAutoFlag,
   selectShowRemaining,
   selectShowSubtraction,
-  selectShowOverlap,
+  selectShowReduce,
   selectShowMerge,
   selectShowBoardConstraint,
   selectResolveComplex
@@ -53,9 +53,9 @@ const Component: React.FC = () => {
         text="Show Subtraction"
       />
       <OptionCheckbox
-        selector={selectShowOverlap}
-        option="showOverlap"
-        text="Show Overlap"
+        selector={selectShowReduce}
+        option="showReduce"
+        text="Show Reduce"
       />
       <OptionCheckbox
         selector={selectShowMerge}

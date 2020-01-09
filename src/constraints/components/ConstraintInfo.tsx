@@ -26,27 +26,11 @@ function getConstraintComplex(constraint: Constraint) {
   );
 }
 
-function getConstraintSimple(constraint: Constraint) {
-  const { coords, minMines, maxMines } = constraint;
-  const cellCount = coords.length;
-
-  const exact = minMines === maxMines;
-  const minesCount = `${minMines}${exact ? "" : `-${maxMines}`}`;
-  return (
-    <div className="constraintInfo">
-      <div>{`${cellCount}c ${minesCount}m`}</div>
-    </div>
-  );
-}
-
 function getConstraintInfo(constraints: Constraint[]) {
   if (constraints.length === 0) {
     return <div className="constraintEmpty">Nothing selected</div>;
   }
-  if (constraints.length === 1) {
-    return getConstraintComplex(constraints[0]);
-  }
-  return constraints.map(c => getConstraintSimple(c));
+  return getConstraintComplex(constraints[0]);
 }
 
 const Component: React.FC<Props> = ({

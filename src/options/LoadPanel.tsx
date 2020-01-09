@@ -36,7 +36,7 @@ const real: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: false,
-    showOverlap: false,
+    showReduce: false,
     showMerge: false,
     showBoardConstraint: false
   }
@@ -59,7 +59,7 @@ const basicTraining: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: false,
-    showOverlap: false,
+    showReduce: false,
     showMerge: false,
     showBoardConstraint: false
   }
@@ -81,7 +81,7 @@ const subtractionTraining1: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showOverlap: false,
+    showReduce: false,
     showMerge: false,
     showBoardConstraint: false
   }
@@ -105,13 +105,13 @@ const subtractionTraining2: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showOverlap: false,
+    showReduce: false,
     showMerge: false,
     showBoardConstraint: false
   }
 };
 
-const overlapTraining1: Save = {
+const reduceTraining1: Save = {
   mines: [
     [0, 1, 0, 0],
     [0, 0, 0, 0],
@@ -130,13 +130,13 @@ const overlapTraining1: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showOverlap: true,
+    showReduce: true,
     showMerge: false,
     showBoardConstraint: false
   }
 };
 
-const overlapTraining2: Save = {
+const reduceTraining2: Save = {
   mines: [
     [0, 0, 1, 1, 0, 0],
     [0, 0, 0, 0, 0, 0],
@@ -154,7 +154,7 @@ const overlapTraining2: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showOverlap: false,
+    showReduce: true,
     showMerge: false,
     showBoardConstraint: false
   }
@@ -178,7 +178,7 @@ const wholeBoardTraining: Save = {
     autoFlag: false,
     resolveComplex: true,
     showSubtraction: true,
-    showOverlap: false,
+    showReduce: false,
     showMerge: false,
     showBoardConstraint: true
   }
@@ -192,8 +192,8 @@ const Component: React.FC = () => {
       <LoadButton name="Basic Training" save={basicTraining} />
       <LoadButton name="Subtraction Training 1" save={subtractionTraining1} />
       <LoadButton name="Subtraction Training 2" save={subtractionTraining2} />
-      <LoadButton name="Overlap Training 1" save={overlapTraining1} />
-      <LoadButton name="Overlap Training 2" save={overlapTraining2} />
+      <LoadButton name="Reduce Training 1" save={reduceTraining1} />
+      <LoadButton name="Reduce Training 2" save={reduceTraining2} />
       <LoadButton name="Whole Board Training" save={wholeBoardTraining} />
     </div>
   );
