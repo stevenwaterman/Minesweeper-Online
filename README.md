@@ -5,6 +5,7 @@ This is a version of the game [minesweeper](https://en.wikipedia.org/wiki/Minesw
 A live version is hosted at http://minesweeper.stevenwaterman.uk
 
 It was created for use in an [NE:Tech talk](https://www.meetup.com/NE-Tech/events/267298193/), "Solving Minesweeper in Polynomial time: a talk written before learning that minesweeper is NP-Complete".
+Watch that talk on [YouTube](https://www.youtube.com/watch?v=2ibiA5TEsxw)!
 
 ## Quick-Start
 
