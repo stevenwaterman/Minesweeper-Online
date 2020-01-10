@@ -1,44 +1,106 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Minesweeper Constrained
 
-## Available Scripts
+This is a version of the game [minesweeper](https://en.wikipedia.org/wiki/Minesweeper_(video_game)) which forces you to use constraint-based solving.
 
-In the project directory, you can run:
+It was created for use in an [NE:Tech talk](https://www.meetup.com/NE-Tech/events/267298193/), "Solving Minesweeper in Polynomial time: a talk written before learning that minesweeper is NP-Complete".
 
-### `yarn start`
+## Quick-Start
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. `Git clone`
+2. `npm i`
+3. `npm run build`
+4. open `build/index.html`
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Instructions:
 
-### `yarn test`
+1. Clicking a cleared cell selects the constraint created by that cell.
+2. If the constraint is clearable or flaggable, clicking it will perform that action.
+3. After selecting constraints, use the buttons under the grid to perform constraint actions.
+4. Move the mouse to the top-right of the screen to access the options panel.
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Constraint Actions
 
-### `yarn build`
+A constraint is a set of cells, a min number of mines, and a max number of mines.
+The constraint created by a cell on the board has `minMines = maxMines = cellNumber`.
+At all times, min and max mines are clamped between `0` to `cells.length`.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+When a constraint is created, it is placed at the bottom of the screen under the `Complex Constraints` section.
+You must enable subtraction, reduction, and merging in the options panel.
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+**Subtraction** is performed with two constraints selected.
+One constraint must be a strict subset of the other.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Given constraints `Big` and `Small`, where `cells(Big).length > cells(Small).length`, produce constraint `C`:
 
-### `yarn eject`
+* `cells(C) = cells(Big) - cells(Small)`
+* `maxMines(C) = maxMines(Big) - minMines(Small)`
+* `minMines(C) = minMines(Big) - maxMines(Small)`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Given `Big: cells {a,b,c,d}, 1 to 2 mines` and `Small: cells {a,b,c}, 0 to 1 mines`, produces `C: cells {d}, 1 mine`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**Reduction** is performed with one constraint selected.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Given constraint `A`, for each cell `c` in `cells(A)`, produce `C`:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* `cells(C) = cells(A) - {c}`
+* `maxMines(C) = maxMines(A)`
+* `minMines(C) = minMines(A) - 1`
 
-## Learn More
+Given `A: cells {a,b,c,d}, 2 to 3 mines`, produces:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* `B: cells{b,c,d}, 1 to 3 mines`
+* `C: cells{a,c,d}, 1 to 3 mines`
+* `D: cells{a,b,d}, 1 to 3 mines`
+* `E: cells{a,b,c}, 1 to 3 mines`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Merging** is performed with two constraints selected.
+
+Given constraints `A` and `B`, where `cells(A) = cells(B), and minMines(A) > minMines(B) or maxMines(A) < maxMines(B)`, produce constraint `C`:
+
+* `cells(C) = cells(A)` (`== cells(B)`)
+* `maxMines(C) = min(maxMines(A), maxMines(B))`
+* `minMines(C) = max(minMines(A), minMines(B))`
+
+Given `A: cells {a,b}, 0 to 1 mine` and `B: cells {a,b}, 1 to 2 mines`, produces `C: cells {a,b}, 1 mine`
+
+### Options
+
+The option panel contains the following options:
+
+* **Show Remaining:** Each number on the board shows the remaining number of mines, not the total number
+* **Cheat Mode:** Highlight constraints that can be trivially cleared/flagged
+* **Auto Zero:** When a cell displays number 0, automatically clear the cells around it
+* **Auto Clear:** Automatically clear any trivial constraints. Slow on large boards.
+* **Auto Flag:** Automatically flag any trivial constraints. Slow on large boards.
+* **Resolve Complex:** When performing a constraint action, clear/flag the result if trivial
+* **Show Subtraction:** Show the subtract constraint action
+* **Show Reduction:** Show the reduce constraint action
+* **Show Merging:** Show the merge constraint action
+* **Show Board Constraint:** Show the constraint created by knowledge of the total number of mines on the board
+
+You can load some hard-coded boards:
+
+* **Real:** The board used in the talk. Requires all techniques (maybe not merging)
+* **Basic Training:** Can be solved with just clearing/flagging
+* **Subtraction Training 1/2:** Requires use of subtraction
+* **Reduction Training 1/2:** Requires use of reduction
+* **Whole Board Training:** Requires use of board constraint
+
+You can also generate a new board.
+It is not guaranteed to be solvable, and guessing is not supported.
+
+## Technology
+
+The site is created with [React-Redux](https://github.com/reduxjs/react-redux) in [TypeScript](https://www.typescriptlang.org/), using [create-react-app](https://create-react-app.dev/docs/adding-typescript/).
+
+The implementation is embarassingly inefficient, as it was made in a rush for one specific talk.
+
+It would benefit a lot from the addition of [redux-thunk](https://github.com/reduxjs/redux-thunk) to retrieve state in action creators.
+Currently, everything that *could* fire an action loads all the state it would need to do so, even if it never fires that action.
+That means that every cell uses selectors to retrieve (create) the constraint for that cell.
+Redux-Thunk would allow you to only create the constraints when needed.
+
+The auto-zero, auto-clear, and auto-flag options are also hilariously inefficient.
+Essentially, each cell's render method checks to see if its constraint could be cleared.
+To clear `n` cells in a cascading manner, the render method gets called `n` times, meaning constraints are generated for the entire board `n` times.
+It would be better to use [redux-saga](https://github.com/redux-saga/redux-saga) to continue dispatching actions until there's nothing left to do.
