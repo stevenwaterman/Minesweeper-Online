@@ -1,5 +1,5 @@
 import { sliceSelector, selectorCreator } from "../utils/Selector";
-import { subtractConstraints, mergeConstraints, reduceConstraint } from "../utils/Constraint";
+import { subtractConstraints, mergeConstraints, reduceConstraints } from "../utils/Constraint";
 
 export const selectSlice = sliceSelector("constraints");
 export const selector = selectorCreator(selectSlice);
@@ -18,6 +18,6 @@ export const selectMerge = selector(
   s => mergeConstraints(s.first, s.second)
 );
 export const selectReduce = selector(
-  s => reduceConstraint(s.first)
+  s => reduceConstraints(s.first, s.second)
 );
 export const selectComplexConstraints = selector(s => s.complexConstraints);

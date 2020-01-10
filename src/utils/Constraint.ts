@@ -59,8 +59,8 @@ export function mergeConstraints(
   };
 }
 
-export function reduceConstraint(c1: Constraint | null): Constraint[] {
-  if (c1 === null) return [];
+export function reduceConstraints(c1: Constraint | null, c2: Constraint | null): Constraint[] {
+  if (c1 === null || c2 !== null) return [];
 
   const cellCount = c1.coords.length - 1;
   const min = Math.min(Math.max(c1.minMines - 1, 0), cellCount);

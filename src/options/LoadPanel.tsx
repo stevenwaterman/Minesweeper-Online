@@ -192,8 +192,8 @@ const Component: React.FC = () => {
       <LoadButton name="Basic Training" save={basicTraining} />
       <LoadButton name="Subtraction Training 1" save={subtractionTraining1} />
       <LoadButton name="Subtraction Training 2" save={subtractionTraining2} />
-      <LoadButton name="Reduce Training 1" save={reduceTraining1} />
-      <LoadButton name="Reduce Training 2" save={reduceTraining2} />
+      <LoadButton name="Reduction Training 1" save={reduceTraining1} />
+      <LoadButton name="Reduction Training 2" save={reduceTraining2} />
       <LoadButton name="Whole Board Training" save={wholeBoardTraining} />
     </div>
   );
